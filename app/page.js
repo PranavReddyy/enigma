@@ -1,103 +1,264 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Win98Button } from "@/components/ui/win-98-button";
+import { BinaryBackground } from "@/components/ui/BinaryBackground";
 import Image from "next/image";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [waitCount, setWaitCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  useEffect(() => {
+    const fetchCounter = async () => {
+      try {
+        const response = await fetch("/api/counter");
+        const data = await response.json();
+        setWaitCount(data.count);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch counter:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchCounter();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const response = await fetch("/api/counter");
+        const data = await response.json();
+        setWaitCount(data.count);
+      } catch (error) {
+        console.error("Failed to sync counter:", error);
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleWaitClick = async () => {
+    try {
+      const response = await fetch("/api/counter", { method: "POST" });
+      const data = await response.json();
+      setWaitCount(data.count);
+    } catch (error) {
+      console.error("Failed to increment counter:", error);
+    }
+  };
+
+  return (
+    <>
+      <BinaryBackground />
+
+      <div
+        style={{
+          minHeight: "100vh",
+          padding: "10px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily:
+            '"MS Sans Serif", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
+        }}
+      >
+        {/* Main Windows 95 Window */}
+        <div
+          style={{
+            maxWidth: "min(500px, 90vw)",
+            width: "100%",
+            backgroundColor: "#c0c0c0",
+            border: "2px solid",
+            borderColor: "#dfdfdf #808080 #808080 #dfdfdf",
+            boxShadow: "inset 1px 1px 0 #ffffff, 2px 2px 4px rgba(0,0,0,0.3)",
+            position: "relative",
+          }}
+        >
+          {/* Logo Dialog Box - positioned relative to main window */}
+          <div
+            style={{
+              position: "absolute",
+              top: "calc(100% - 70px)",
+              left: "calc(100% - 110px)",
+              zIndex: 10,
+              backgroundColor: "#c0c0c0",
+              border: "2px solid",
+              borderColor: "#dfdfdf #808080 #808080 #dfdfdf",
+              boxShadow: "inset 1px 1px 0 #ffffff, 2px 2px 4px rgba(0,0,0,0.3)",
+              width: "min(120px, 30vw)",
+              transform:
+                "translateX(clamp(-120px, calc(100vw - 100% - 140px), 0px))",
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            {/* Logo Title Bar */}
+            <div
+              style={{
+                backgroundColor: "#000080",
+                color: "white",
+                padding: "2px 4px",
+                fontSize: "min(11px, 3vw)",
+                fontWeight: "bold",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span>Enigma</span>
+              <div style={{ display: "flex", gap: "2px" }}>
+                <button
+                  style={{
+                    width: "min(16px, 4vw)",
+                    height: "min(14px, 3.5vw)",
+                    backgroundColor: "#c0c0c0",
+                    border: "1px solid",
+                    borderColor: "#dfdfdf #808080 #808080 #dfdfdf",
+                    fontSize: "min(8px, 2vw)",
+                  }}
+                >
+                  _
+                </button>
+                <button
+                  style={{
+                    width: "min(16px, 4vw)",
+                    height: "min(14px, 3.5vw)",
+                    backgroundColor: "#c0c0c0",
+                    border: "1px solid",
+                    borderColor: "#dfdfdf #808080 #808080 #dfdfdf",
+                    fontSize: "min(8px, 2vw)",
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+
+            {/* Logo Content */}
+            <div
+              style={{
+                padding: "min(15px, 4vw)",
+                textAlign: "center",
+              }}
+            >
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={0}
+                height={0}
+                sizes="100vw"
+                style={{
+                  width: "min(80px, 20vw)",
+                  height: "min(80px, 20vw)",
+                  filter: "drop-shadow(1px 1px 2px rgba(0,0,0,0.3))",
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Title Bar */}
+          <div
+            style={{
+              backgroundColor: "#000080",
+              color: "white",
+              padding: "2px 4px",
+              fontSize: "min(11px, 3vw)",
+              fontWeight: "bold",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
           >
-            Read our docs
-          </a>
+            <span>Website Status</span>
+            <div style={{ display: "flex", gap: "2px" }}>
+              <button
+                style={{
+                  width: "min(16px, 4vw)",
+                  height: "min(14px, 3.5vw)",
+                  backgroundColor: "#c0c0c0",
+                  border: "1px solid",
+                  borderColor: "#dfdfdf #808080 #808080 #dfdfdf",
+                  fontSize: "min(8px, 2vw)",
+                }}
+              >
+                _
+              </button>
+              <button
+                style={{
+                  width: "min(16px, 4vw)",
+                  height: "min(14px, 3.5vw)",
+                  backgroundColor: "#c0c0c0",
+                  border: "1px solid",
+                  borderColor: "#dfdfdf #808080 #808080 #dfdfdf",
+                  fontSize: "min(8px, 2vw)",
+                }}
+              >
+                ×
+              </button>
+            </div>
+          </div>
+
+          {/* Window Content */}
+          <div
+            style={{
+              padding: "min(30px, 6vw)",
+              textAlign: "center",
+            }}
+          >
+            <h1
+              style={{
+                fontSize: "min(20px, 5vw)",
+                fontWeight: "bold",
+                marginBottom: "min(30px, 6vw)",
+                color: "#000080",
+              }}
+            >
+              WEBSITE UNDER CONSTRUCTION
+            </h1>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "min(20px, 4vw)",
+                flexWrap: "wrap",
+              }}
+            >
+              <Win98Button
+                onClick={handleWaitClick}
+                style={{
+                  fontSize: "min(12px, 3vw)",
+                  fontWeight: "bold",
+                  minWidth: "min(100px, 25vw)",
+                  height: "min(40px, 10vw)",
+                }}
+              >
+                WAIT
+              </Win98Button>
+
+              <div
+                style={{
+                  border: "2px solid",
+                  borderColor: "#808080 #dfdfdf #dfdfdf #808080",
+                  backgroundColor: "#ffffff",
+                  padding: "0px min(20px, 4vw)",
+                  minWidth: "min(80px, 20vw)",
+                  height: "min(40px, 10vw)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "min(14px, 3.5vw)",
+                  fontWeight: "bold",
+                  boxSizing: "border-box",
+                }}
+              >
+                {loading ? "..." : waitCount.toLocaleString()}
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+    </>
   );
 }
