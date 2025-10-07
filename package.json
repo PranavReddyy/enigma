@@ -9,15 +9,26 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@octokit/rest": "^21.1.1",
     "@radix-ui/react-slot": "^1.2.3",
     "@supabase/supabase-js": "^2.57.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "framer-motion": "^12.23.16",
     "lucide-react": "^0.544.0",
+    "motion": "^12.23.16",
     "next": "15.5.3",
+    "pusher": "^5.2.0",
+    "pusher-js": "^8.4.0",
     "react": "19.1.0",
+    "react-day-picker": "^9.11.0",
     "react-dom": "19.1.0",
-    "tailwind-merge": "^3.3.1"
+    "react-fast-marquee": "^1.6.5",
+    "react-type-animation": "^3.2.0",
+    "tailwind-merge": "^3.3.1",
+    "three": "^0.180.0",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

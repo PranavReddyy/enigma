@@ -11,7 +11,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Windows 95 era font stack
 const win95FontStack = {
   fontFamily:
     '"MS Sans Serif", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
@@ -30,7 +29,7 @@ export default function RootLayout({ children }) {
         style={{
           fontFamily:
             '"MS Sans Serif", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
-          backgroundColor: "#c0c0c0",
+          backgroundColor: "#000000",
         }}
       >
         {children}
