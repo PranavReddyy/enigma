@@ -23,6 +23,18 @@ export function HomePage() {
     }, 100);
   };
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.hash) {
+      const hash = window.location.hash;
+      setTimeout(() => {
+        const element = document.querySelector(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 1000);
+    }
+  }, [showMainContent]);
+
   return (
     <div className="relative bg-black min-h-screen">
       <motion.div

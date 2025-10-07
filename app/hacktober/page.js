@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Trophy, Users, GitPullRequest, Star, Search, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { HeroHeader } from "@/components/header";
+import { FooterSection } from "@/components/sections/footer-section";
 import {
   GitFork,
   GitMerge,
@@ -20,6 +21,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { pusherClient } from "@/lib/pusher";
+import PlexusBackground from "@/components/background";
 
 const subcommittees = [
   {
@@ -509,10 +511,11 @@ export default function HacktoberPage() {
   }, [searchQuery, leaderboardData]);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-transparent text-white">
       <HeroHeader />
+      <PlexusBackground />
 
-      <section className="h-[60vh] md:h-screen relative">
+      <section className="h-[60vh] md:h-screen relative flex items-end">
         <Image
           src="/hacktober.png"
           alt="Hacktober 2025"
@@ -520,12 +523,13 @@ export default function HacktoberPage() {
           className="object-cover object-center"
           priority
         />
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
+        {/* Enhanced gradient overlay */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 md:h-48 bg-gradient-to-t from-black via-black/90 to-transparent"></div>
       </section>
 
       <main className="relative">
         <div className="max-w-5xl mx-auto px-6 lg:px-8">
-          <section className="pt-20 pb-24">
+          <section className="md:pt-5 pb-24">
             <div className="text-center mb-16">
               <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">
                 What is Hacktoberfest?
@@ -965,6 +969,7 @@ git push origin feature/your-feature-name
           </section>
         </div>
       </main>
+      <FooterSection />
     </div>
   );
 }

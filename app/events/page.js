@@ -30,6 +30,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 import PlexusBackground from "@/components/background";
+import { FooterSection } from "@/components/sections/footer-section";
 
 const EventCard = ({ event }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -398,6 +399,7 @@ export default function EventsPage() {
           </div>
         </div>
       </main>
+      <FooterSection />
     </div>
   );
 }

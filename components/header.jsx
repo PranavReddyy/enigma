@@ -7,6 +7,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect } from 'react'
 
 const menuItems = [
     { name: 'About Us', href: '#about' },
@@ -47,37 +48,50 @@ export const HeroHeader = () => {
     }, [])
 
     React.useEffect(() => {
-        if (menuState) {
-            const scrollY = window.scrollY;
-            document.body.style.position = 'fixed';
-            document.body.style.top = `-${scrollY}px`;
-            document.body.style.left = '0';
-            document.body.style.right = '0';
-
-            return () => {
-                document.body.style.position = '';
-                document.body.style.top = '';
-                document.body.style.left = '';
-                document.body.style.right = '';
-                window.scrollTo(0, scrollY);
-            };
-        }
-    }, [menuState]);
-
-    const handleNavClick = (e, href) => {
-        setMenuState(false)
-        if (href.startsWith('#')) {
-            e.preventDefault()
-            if (pathname === '/') {
-                const element = document.querySelector(href)
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                }
-            } else {
-                router.push('/' + href)
-            }
+    let scrollY = 0;
+    
+    if (menuState) {
+        scrollY = window.scrollY;
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        document.body.style.width = '100%';
+    } else {
+        const storedScrollY = parseInt(document.body.style.top || '0') * -1;
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
+        
+        if (pathname === '/' && storedScrollY > 0) {
+            window.scrollTo(0, storedScrollY);
         }
     }
+}, [menuState, pathname]);
+
+    const handleNavClick = (e, href) => {
+    const currentScrollY = window.scrollY;
+    setMenuState(false);
+    
+    if (href.startsWith('#')) {
+        e.preventDefault();
+        
+        if (pathname === '/') {
+            setTimeout(() => {
+                const element = document.querySelector(href);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 300); 
+        } else {
+            router.push('/' + href);
+        }
+    } else {
+        router.push(href);
+    }
+};
 
     return (
         <header className="relative">
@@ -146,30 +160,33 @@ export const HeroHeader = () => {
                         <div className="flex flex-col items-center justify-center h-full">
                             <ul className="space-y-8 text-center">
                                 {menuItems.map((item, index) => (
-                                    <li key={index} className="overflow-hidden">
-                                        <motion.div variants={navLinkVariants} initial="initial" animate="open">
-                                            <Link
-                                                href={item.href}
-                                                onClick={(e) => handleNavClick(e, item.href)}
-                                                className="text-4xl font-medium text-gray-300 transition-colors hover:text-white"
-                                            >
-                                                {item.name}
-                                            </Link>
-                                        </motion.div>
-                                    </li>
-                                ))}
-                                <li className="overflow-hidden">
-                                    <motion.div variants={navLinkVariants} initial="initial" animate="open">
-                                        <Link
-                                            href="/hacktober"
-                                            onClick={(e) => handleNavClick(e, '/hacktober')}
-                                            className="relative text-4xl font-medium text-orange-400 hover:text-orange-300 transition-all duration-200 overflow-hidden group hover:scale-105"
-                                        >                                            
-                                            <div className="absolute inset-0 rounded blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                            <span className="relative z-10 drop-shadow-sm">Hacktober</span>
-                                        </Link>
-                                    </motion.div>
-                                </li>
+    <li key={index} className="overflow-hidden">
+        <motion.div variants={navLinkVariants} initial="initial" animate="open">
+            <Link
+                href={item.href}
+                onClick={(e) => handleNavClick(e, item.href)}
+                className="text-4xl font-medium text-gray-300 transition-colors hover:text-white"
+            >
+                {item.name}
+            </Link>
+        </motion.div>
+    </li>
+))}
+<li className="overflow-hidden">
+    <motion.div variants={navLinkVariants} initial="initial" animate="open">
+        <Link
+            href="/hacktober"
+            onClick={(e) => {
+                setMenuState(false);
+                router.push('/hacktober');
+            }}
+            className="relative text-4xl font-medium text-orange-400 hover:text-orange-300 transition-all duration-200 overflow-hidden group hover:scale-105"
+        >                                            
+            <div className="absolute inset-0 rounded blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <span className="relative z-10 drop-shadow-sm">Hacktober</span>
+        </Link>
+    </motion.div>
+</li>
                             </ul>
                             <div className="mt-16">
                                 <Button asChild variant="outline" size="lg" className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:border-white/30 backdrop-blur-sm">
