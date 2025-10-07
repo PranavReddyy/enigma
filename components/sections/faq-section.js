@@ -53,7 +53,7 @@ const faqs = [
       <>
         You can follow us on{" "}
         <a
-          href="https://www.instagram.com/enigma.mu?igsh=bnZqMXRyZHF6bWJ6"
+          href="https://www.instagram.com/enigma.mu"
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-400 underline hover:text-blue-300 transition-colors"
@@ -62,7 +62,7 @@ const faqs = [
         </a>
         , subscribe to our{" "}
         <a
-          href="https://youtube.com/@mu-enigma?si=vEoD9rWjeuShsMLE"
+          href="https://youtube.com/@mu-enigma"
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-400 underline hover:text-blue-300 transition-colors"

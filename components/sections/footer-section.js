@@ -28,7 +28,7 @@ const socialLinks = [
   },
   {
     name: "Instagram",
-    href: "https://instagram.com/enigmamahindra",
+    href: "https://www.instagram.com/enigma.mu/",
     icon: Instagram,
   },
   {
