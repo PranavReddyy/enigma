@@ -2,27 +2,35 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-
 const faqs = [
   {
     question: "What is Enigma?",
     answer:
-      "Enigma is the Computer Science club of Mahindra University. We bring together students who share a passion for coding, technology, and problem solving.",
+      "Enigma is the Computer Science club of Mahindra University. We bring together students who share a passion for technology, programming, and appreciating the beauty of Computer Science through applications such as projects, problem solving, and more.",
   },
   {
     question: "How can I join Enigma?",
-    answer:
-      "You can join by taking part in our recruitment drive at the start of each semester. We welcome both beginners and experienced coders.",
-  },
-  {
-    question: "Is that the only way to join?",
-    answer:
-      "Not at all. You can also come to our events, workshops, and hackathons to interact with us and become a part of the community.",
+    answer: (
+      <>
+        You can join as a technical developer by simply starting a project with
+        us in{" "}
+        <a
+          href="https://thesparchive.com/projectinit"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 underline hover:text-blue-300 transition-colors"
+        >
+          Enigma&apos;s Projects Initiative
+        </a>
+        . To be a part of an operational team, you can follow up with our
+        recruitment emails or simply contact us.
+      </>
+    ),
   },
   {
     question: "What events does Enigma organize?",
     answer:
-      "We host hackathons, coding challenges, hands-on workshops, tech talks, and our flagship Gamescon event (gaming + hackathon), along with meetups and project expos.",
+      "We host hackathons, coding challenges, hands-on workshops, chill discussion rooms, meetups, and even project expos. Specifically, we have our flagship GameCon festival, along with the Hacktoberfest, our flagship open-source celebration.",
   },
   {
     question: "Do I need prior coding experience to be a part of Enigma?",
@@ -30,9 +38,9 @@ const faqs = [
       "No. Everyone curious about tech is welcome. We run beginner-friendly tracks, mentoring, and community support so you can grow your skills.",
   },
   {
-    question: "What is Gamescon?",
+    question: "What is GameCon?",
     answer:
-      "Gamescon is Enigma’s flagship gaming + hackathon event. It brings together coders, gamers, and creators to compete, build projects, and showcase creative tech ideas.",
+      "GameCon is Enigma’s GameDev committee's flagship event. It brings together coders, gamers, and creators to compete, build projects, and showcase creative tech ideas alongside E-Sports and Gaming Competitions. A celebration of gaming overall!",
   },
   {
     question: "How often are workshops and coding challenges held?",
@@ -40,17 +48,59 @@ const faqs = [
       "We schedule workshops and challenge events continuously throughout the year. On average there are two to four events each month covering technical topics, tools, and trending domains.",
   },
   {
-    question: "Did you know?",
-    answer: "A certain Enigma member loves sleep the most",
+    question: "How can I follow Enigma’s updates and content?",
+    answer: (
+      <>
+        You can follow us on{" "}
+        <a
+          href="https://www.instagram.com/enigma.mu?igsh=bnZqMXRyZHF6bWJ6"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 underline hover:text-blue-300 transition-colors"
+        >
+          Instagram
+        </a>
+        , subscribe to our{" "}
+        <a
+          href="https://youtube.com/@mu-enigma?si=vEoD9rWjeuShsMLE"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 underline hover:text-blue-300 transition-colors"
+        >
+          YouTube channel
+        </a>
+        , and watch our{" "}
+        <a
+          href="https://github.com/MU-Enigma"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 underline hover:text-blue-300 transition-colors"
+        >
+          GitHub repositories
+        </a>{" "}
+        for project updates.
+      </>
+    ),
   },
   {
-    question: "Random Enigma trivia",
+    question: "What happens if I type enigma.mu/404?",
+    answer:
+      "Probably nothing. Or maybe everything. Sometimes the best discoveries come from missing pages.",
+  },
+  {
+    question: "Is there really a hidden message across Enigma’s platforms?",
+    answer:
+      "We cannot confirm or deny that. But if you look closely at our posts, repositories, and videos, you might start connecting the dots.",
+  },
+  {
+    question: "Random Enigma Trivia!",
     answer:
       "Nobody really knows what 6:49 stands for, could be a time, a date, a name in some random lexical format.",
   },
   {
-    question: "What’s Enigma's  goal?",
-    answer: "To help students grow, learn and love CompSci the same way we do!",
+    question: "What is Enigma's goal?",
+    answer:
+      "Enigma is a community of curious minds who are passionate about Computer Science. We, the organizing committee, aspire to bring you the needed support, events, and resources to help you appreciate the true beauty of Computer Science through hands-on application and collaborative learning. We are Enigma.",
   },
 ];
 
