@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="logo.png" width="60" alt="Enigma Logo">
+  <img src="public/whitelogo.png" width="60" alt="Enigma Logo">
   <h1>Enigma</h1>
   <p>Official website for Enigma, the Computer Science Club of Mahindra University</p>
   <p>
@@ -12,7 +12,7 @@
   </p>
 </div>
 
-![Enigma Website](enigma.png)
+![Enigma Website](public/enigma.png)
 
 <a href="https://mu-enigma.org" target="_blank">Visit the website</a>
 
