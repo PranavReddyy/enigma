@@ -692,193 +692,199 @@ git push origin feature/your-feature-name
               </p>
             </div>
 
-            <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-8">
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-semibold text-white">
-                    Top Contributors
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                    <span className="text-xs text-gray-500">Live updates</span>
+            <div className="max-w-6xl mx-auto">
+              <div className="grid lg:grid-cols-2 gap-8">
+                <div className="space-y-6 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-semibold text-white">
+                      Top Contributors
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                      <span className="text-xs text-gray-500">
+                        Live updates
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                {/* Search Box */}
-                {leaderboardData.length >= 0 && (
-                  <div className="mb-4">
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Search className="w-4 h-4 text-gray-500" />
+                  {/* Search Box */}
+                  {leaderboardData.length >= 0 && (
+                    <div className="mb-4">
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <Search className="w-4 h-4 text-gray-500" />
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="Search contributors..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="w-full pl-10 pr-10 py-3 bg-white/[0.02] border border-white/[0.08] rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-400/50 focus:ring-1 focus:ring-orange-400/20 transition-all duration-300"
+                        />
+                        {searchQuery && (
+                          <button
+                            onClick={() => setSearchQuery("")}
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-300 transition-colors"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
-                      <input
-                        type="text"
-                        placeholder="Search contributors..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-10 py-3 bg-white/[0.02] border border-white/[0.08] rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-orange-400/50 focus:ring-1 focus:ring-orange-400/20 transition-all duration-300"
-                      />
                       {searchQuery && (
-                        <button
-                          onClick={() => setSearchQuery("")}
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-300 transition-colors"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
+                        <p className="text-xs text-gray-500 mt-2">
+                          {filteredLeaderboard.length} contributor
+                          {filteredLeaderboard.length !== 1 ? "s" : ""} found
+                        </p>
                       )}
                     </div>
-                    {searchQuery && (
-                      <p className="text-xs text-gray-500 mt-2">
-                        {filteredLeaderboard.length} contributor
-                        {filteredLeaderboard.length !== 1 ? "s" : ""} found
-                      </p>
+                  )}
+
+                  {/* Leaderboard */}
+                  <div className="bg-white/[0.02] border border-white/[0.08] rounded-2xl p-2">
+                    {loading ? (
+                      <div className="flex justify-center py-16">
+                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-orange-400 border-t-transparent"></div>
+                      </div>
+                    ) : filteredLeaderboard.length > 0 ? (
+                      <div className="space-y-1 h-80 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20 px-2">
+                        {filteredLeaderboard.map((user, index) => {
+                          const originalRank =
+                            leaderboardData.findIndex(
+                              (u) => u.username === user.username
+                            ) + 1;
+                          const isSearchResult =
+                            searchQuery.trim() !== "" &&
+                            user.username
+                              .toLowerCase()
+                              .includes(searchQuery.toLowerCase());
+
+                          return (
+                            <LeaderboardCard
+                              key={user.username}
+                              rank={originalRank}
+                              user={user.username}
+                              prs={user.mergedPRs}
+                              avatar={user.avatar}
+                              isSearchResult={isSearchResult}
+                            />
+                          );
+                        })}
+                      </div>
+                    ) : searchQuery.trim() !== "" ? (
+                      <div className="text-center py-16">
+                        <Search className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-white mb-2">
+                          No contributors found
+                        </h3>
+                        <p className="text-gray-500">
+                          Try searching with a different username
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="text-center py-16">
+                        <Trophy className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-white mb-2">
+                          No contributions yet
+                        </h3>
+                        <p className="text-gray-500">
+                          Be the first to make a contribution!
+                        </p>
+                      </div>
                     )}
                   </div>
-                )}
-
-                {/* Leaderboard */}
-                <div className="bg-white/[0.02] border border-white/[0.08] rounded-2xl p-2">
-                  {loading ? (
-                    <div className="flex justify-center py-16">
-                      <div className="animate-spin rounded-full h-8 w-8 border-2 border-orange-400 border-t-transparent"></div>
-                    </div>
-                  ) : filteredLeaderboard.length > 0 ? (
-                    <div className="space-y-1 h-80 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20 px-2">
-                      {filteredLeaderboard.map((user, index) => {
-                        const originalRank =
-                          leaderboardData.findIndex(
-                            (u) => u.username === user.username
-                          ) + 1;
-                        const isSearchResult =
-                          searchQuery.trim() !== "" &&
-                          user.username
-                            .toLowerCase()
-                            .includes(searchQuery.toLowerCase());
-
-                        return (
-                          <LeaderboardCard
-                            key={user.username}
-                            rank={originalRank}
-                            user={user.username}
-                            prs={user.mergedPRs}
-                            avatar={user.avatar}
-                            isSearchResult={isSearchResult}
-                          />
-                        );
-                      })}
-                    </div>
-                  ) : searchQuery.trim() !== "" ? (
-                    <div className="text-center py-16">
-                      <Search className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-white mb-2">
-                        No contributors found
-                      </h3>
-                      <p className="text-gray-500">
-                        Try searching with a different username
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="text-center py-16">
-                      <Trophy className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-white mb-2">
-                        No contributions yet
-                      </h3>
-                      <p className="text-gray-500">
-                        Be the first to make a contribution!
-                      </p>
-                    </div>
-                  )}
                 </div>
-              </div>
 
-              {/* Right Side - Recent Activity */}
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-semibold text-white">
-                    Recent Activity
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <GitMerge className="w-4 h-4 text-orange-400" />
-                    <span className="text-xs text-gray-500">Latest merges</span>
+                {/* Right Side - Recent Activity */}
+                <div className="space-y-6 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-semibold text-white">
+                      Recent Activity
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <GitMerge className="w-4 h-4 text-orange-400" />
+                      <span className="text-xs text-gray-500">
+                        Latest merges
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="bg-white/[0.02] border border-white/[0.08] rounded-2xl p-6 h-[400px] overflow-hidden">
-                  {loading ? (
-                    <div className="space-y-4 animate-pulse">
-                      {Array(6)
-                        .fill(0)
-                        .map((_, i) => (
-                          <div key={i} className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-gray-800 rounded-lg"></div>
-                            <div className="flex-1">
-                              <div className="h-4 bg-gray-800 rounded mb-1"></div>
-                              <div className="h-3 bg-gray-800 rounded w-2/3"></div>
+                  <div className="bg-white/[0.02] border border-white/[0.08] rounded-2xl p-6 h-[400px] overflow-hidden">
+                    {loading ? (
+                      <div className="space-y-4 animate-pulse">
+                        {Array(6)
+                          .fill(0)
+                          .map((_, i) => (
+                            <div key={i} className="flex items-center gap-3">
+                              <div className="w-8 h-8 bg-gray-800 rounded-lg"></div>
+                              <div className="flex-1">
+                                <div className="h-4 bg-gray-800 rounded mb-1"></div>
+                                <div className="h-3 bg-gray-800 rounded w-2/3"></div>
+                              </div>
+                              <div className="w-16 h-6 bg-gray-800 rounded"></div>
                             </div>
-                            <div className="w-16 h-6 bg-gray-800 rounded"></div>
-                          </div>
-                        ))}
-                    </div>
-                  ) : recentActivity.length > 0 ? (
-                    <div className="space-y-4 h-full overflow-y-auto scrollbar-thin scrollbar-track-gray-800/20 scrollbar-thumb-white/20 hover:scrollbar-thumb-white/30 pr-2">
-                      {recentActivity.map((activity, index) => (
-                        <motion.div
-                          key={`${activity.user}-${
-                            activity.timestamp || index
-                          }`}
-                          initial={{ opacity: 0, x: 10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.02] transition-colors flex-shrink-0"
-                        >
-                          <div className="w-8 h-8 bg-green-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <GitMerge className="w-4 h-4 text-green-400" />
-                          </div>
-                          {activity.avatar && (
-                            <img
-                              src={activity.avatar}
-                              alt={activity.user}
-                              className="w-8 h-8 rounded-lg border border-white/10 flex-shrink-0"
-                            />
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="text-white font-medium text-sm">
-                                {activity.user}
-                              </span>
-                              <span className="text-gray-500 text-xs">
-                                {activity.action}
-                              </span>
+                          ))}
+                      </div>
+                    ) : recentActivity.length > 0 ? (
+                      <div className="space-y-4 h-full overflow-y-auto scrollbar-thin scrollbar-track-gray-800/20 scrollbar-thumb-white/20 hover:scrollbar-thumb-white/30 pr-2">
+                        {recentActivity.map((activity, index) => (
+                          <motion.div
+                            key={`${activity.user}-${
+                              activity.timestamp || index
+                            }`}
+                            initial={{ opacity: 0, x: 10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.02] transition-colors flex-shrink-0"
+                          >
+                            <div className="w-8 h-8 bg-green-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <GitMerge className="w-4 h-4 text-green-400" />
                             </div>
-                            <div className="flex items-center gap-2 mt-0.5">
-                              <span className="text-xs text-orange-400 font-medium">
-                                {activity.repo}
-                              </span>
-                              <span className="text-xs text-gray-600">•</span>
-                              <span className="text-xs text-gray-500">
-                                {activity.time}
-                              </span>
-                            </div>
-                            {activity.title && (
-                              <p className="text-xs text-gray-600 mt-1 truncate">
-                                {activity.title}
-                              </p>
+                            {activity.avatar && (
+                              <img
+                                src={activity.avatar}
+                                alt={activity.user}
+                                className="w-8 h-8 rounded-lg border border-white/10 flex-shrink-0"
+                              />
                             )}
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <GitMerge className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-white mb-2">
-                        No recent activity
-                      </h3>
-                      <p className="text-gray-500 text-sm">
-                        PR merges will appear here in real-time
-                      </p>
-                    </div>
-                  )}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-white font-medium text-sm">
+                                  {activity.user}
+                                </span>
+                                <span className="text-gray-500 text-xs">
+                                  {activity.action}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <span className="text-xs text-orange-400 font-medium">
+                                  {activity.repo}
+                                </span>
+                                <span className="text-xs text-gray-600">•</span>
+                                <span className="text-xs text-gray-500">
+                                  {activity.time}
+                                </span>
+                              </div>
+                              {activity.title && (
+                                <p className="text-xs text-gray-600 mt-1 truncate">
+                                  {activity.title}
+                                </p>
+                              )}
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <GitMerge className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-white mb-2">
+                          No recent activity
+                        </h3>
+                        <p className="text-gray-500 text-sm">
+                          PR merges will appear here in real-time
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
