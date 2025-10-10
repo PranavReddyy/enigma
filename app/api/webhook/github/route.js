@@ -5,7 +5,7 @@ import { pusher } from "@/lib/pusher";
 const REPO_COMMITTEE_MAP = {
   "Enigma-AIML25": "AI/ML",
   "Syscom-2025": "SysCom",
-  Enigma_CyberSec_2025: "Cyber",
+  "Enigma_CyberSec_2025": "Cyber",
   "GAMEDEV-2025": "GameDev",
   "Enigma-WebDev-FoodApp": "WebDev",
 };
