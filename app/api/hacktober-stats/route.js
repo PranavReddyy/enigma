@@ -20,7 +20,7 @@ const ORG_NAME = "MU-Enigma";
 const REPO_COMMITTEE_MAP = {
   "Enigma-AIML25": "AI/ML",
   "Syscom-2025": "SysCom",
-  "Enigma_CyberSec_2025": "Cyber",
+  "Enigma_CyberSec_2025": "CyberSec",
   "GAMEDEV-2025": "GameDev",
   "Enigma-WebDev-FoodApp": "WebDev",
 };
