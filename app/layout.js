@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/lib/auth-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -10,11 +11,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
-const win95FontStack = {
-  fontFamily:
-    '"MS Sans Serif", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
-};
 
 export const metadata = {
   title: "Enigma",
@@ -32,7 +28,7 @@ export default function RootLayout({ children }) {
           backgroundColor: "#000000",
         }}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
