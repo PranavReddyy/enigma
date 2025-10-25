@@ -7,7 +7,7 @@ import { ChevronDown, GitCommit } from "lucide-react";
 const updates = [
   {
     version: "v1.01",
-    date: "Oct 25, 2024",
+    date: "Oct 25, 2025",
     items: [
       "Hacktober Stats fix (Stats are godly, great job y'all)",
       "Added mobile CLI support",
@@ -16,7 +16,7 @@ const updates = [
   },
   {
     version: "v1.0",
-    date: "Sep 22, 2024",
+    date: "Sep 22, 2025",
     items: ["Initial public release", "Core features and design"],
   },
 ];
