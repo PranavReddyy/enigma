@@ -27,47 +27,117 @@ const REPO_COMMITTEE_MAP = {
 
 const REPOS = Object.keys(REPO_COMMITTEE_MAP);
 
-// Helper function to fetch all PRs with pagination
 async function fetchAllMergedPRs(owner, repo) {
   let allMergedPRs = [];
   let page = 1;
   let hasMore = true;
+
+  console.log(`Fetching all PRs from ${owner}/${repo}...`);
 
   while (hasMore) {
     try {
       const { data: prs } = await octokit.rest.pulls.list({
         owner,
         repo,
-        state: "closed",
+        state: "all",
         per_page: 100,
         page,
-        sort: "updated",
+        sort: "created",
         direction: "desc",
       });
 
-      // Filter for merged PRs only
       const mergedPRs = prs.filter((pr) => pr.merged_at);
       allMergedPRs = [...allMergedPRs, ...mergedPRs];
 
-      // If we got less than 100 results, we've reached the end
+      console.log(
+        `Page ${page}: Found ${prs.length} PRs, ${mergedPRs.length} merged`
+      );
+
       if (prs.length < 100) {
         hasMore = false;
       } else {
         page++;
       }
 
-      // Safety limit to prevent infinite loops
-      if (page > 20) {
-        console.warn(`Reached page limit for ${owner}/${repo}`);
+      if (page > 100) {
+        console.warn(`Reached safety limit for ${owner}/${repo}`);
         hasMore = false;
       }
     } catch (error) {
-      console.error(`Error fetching page ${page} for ${owner}/${repo}:`, error);
+      console.error(
+        `Error fetching page ${page} for ${owner}/${repo}:`,
+        error.message
+      );
       hasMore = false;
     }
   }
 
+  // console.log(
+  //   `Total merged PRs found for ${owner}/${repo}: ${allMergedPRs.length}`
+  // );
   return allMergedPRs;
+}
+
+// Alternative method: Fetch using GraphQL for better pagination
+async function fetchAllMergedPRsGraphQL(owner, repo) {
+  const query = `
+    query($owner: String!, $repo: String!, $cursor: String) {
+      repository(owner: $owner, name: $repo) {
+        pullRequests(first: 100, after: $cursor, states: MERGED, orderBy: {field: CREATED_AT, direction: DESC}) {
+          totalCount
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+          nodes {
+            number
+            title
+            author {
+              login
+              avatarUrl
+            }
+            mergedAt
+          }
+        }
+      }
+    }
+  `;
+
+  let allPRs = [];
+  let hasNextPage = true;
+  let cursor = null;
+  let pageCount = 0;
+
+  console.log(`Fetching merged PRs from ${owner}/${repo} using GraphQL...`);
+
+  while (hasNextPage && pageCount < 100) {
+    try {
+      const response = await octokit.graphql(query, {
+        owner,
+        repo,
+        cursor,
+      });
+
+      const pullRequests = response.repository.pullRequests;
+      allPRs = [...allPRs, ...pullRequests.nodes];
+
+      hasNextPage = pullRequests.pageInfo.hasNextPage;
+      cursor = pullRequests.pageInfo.endCursor;
+      pageCount++;
+
+      // console.log(
+      //   `GraphQL Page ${pageCount}: Found ${pullRequests.nodes.length} PRs (Total: ${allPRs.length}/${pullRequests.totalCount})`
+      // );
+    } catch (error) {
+      console.error(`GraphQL error for ${owner}/${repo}:`, error.message);
+      hasNextPage = false;
+    }
+  }
+
+  // console.log(
+  //   `Total merged PRs found via GraphQL for ${owner}/${repo}: ${allPRs.length}`
+  // );
+  return allPRs;
 }
 
 export async function GET() {
@@ -82,15 +152,15 @@ export async function GET() {
       committeeStats.set(committee, {
         name: committee,
         mergedPRs: 0,
-        totalContributors: new Set(),
+        totalContributors: new Set(), // Each committee tracks its own unique contributors
       });
     });
 
-    // Fetch data for each repository
+    // Fetch data for each repository using GraphQL
     for (const repoName of REPOS) {
       try {
-        // Fetch all merged PRs with pagination
-        const mergedPRs = await fetchAllMergedPRs(ORG_NAME, repoName);
+        // Use GraphQL method for better pagination
+        const mergedPRs = await fetchAllMergedPRsGraphQL(ORG_NAME, repoName);
 
         const committeeName = REPO_COMMITTEE_MAP[repoName];
         const stats = committeeStats.get(committeeName);
@@ -101,10 +171,11 @@ export async function GET() {
 
           // Process each PR
           mergedPRs.forEach((pr) => {
-            const username = pr.user.login;
-            const avatar = pr.user.avatar_url;
+            const username = pr.author?.login;
+            const avatar = pr.author?.avatarUrl;
 
-            // Update leaderboard
+            if (!username) return; // Skip if no author
+
             if (leaderboard.has(username)) {
               leaderboard.get(username).mergedPRs++;
             } else {
@@ -115,27 +186,31 @@ export async function GET() {
               });
             }
 
-            // Track contributors per committee
+            // Track contributors per committee (can overlap between committees)
+            // Each committee counts the contributor separately
             stats.totalContributors.add(username);
 
-            // Add to recent activity (we'll sort and limit later)
+            // Add to recent activity
             recentActivity.push({
               user: username,
               repo: committeeName,
-              time: getTimeAgo(new Date(pr.merged_at)),
+              time: getTimeAgo(new Date(pr.mergedAt)),
               action: "merged PR",
               avatar: avatar,
               title: pr.title,
-              timestamp: new Date(pr.merged_at),
+              timestamp: new Date(pr.mergedAt),
             });
           });
         }
-      } catch (error) {
-        // console.error(
-        //   `Error processing ${ORG_NAME}/${repoName}:`,
-        //   error.message
+
+        // console.log(
+        //   `${committeeName}: ${stats.mergedPRs} PRs, ${stats.totalContributors.size} unique contributors`
         // );
-        // Continue with other repos even if one fails
+      } catch (error) {
+        console.error(
+          `Error processing ${ORG_NAME}/${repoName}:`,
+          error.message
+        );
       }
     }
 
@@ -154,15 +229,40 @@ export async function GET() {
       (stats) => ({
         name: stats.name,
         mergedPRs: stats.mergedPRs,
-        totalContributors: stats.totalContributors.size,
+        totalContributors: stats.totalContributors.size, // Count unique contributors per committee
       })
     );
+
+    // Calculate total unique contributors across ALL committees (no duplicates)
+    const allContributors = new Set();
+    committeeStats.forEach((stats) => {
+      stats.totalContributors.forEach((username) =>
+        allContributors.add(username)
+      );
+    });
+
+    // console.log("Final Stats:", {
+    //   totalUniqueContributors: allContributors.size, // Unique across all committees
+    //   totalContributorsAcrossCommittees: committeeStatsArray.reduce(
+    //     (sum, c) => sum + c.totalContributors,
+    //     0
+    //   ), // Sum of all (with overlaps)
+    //   totalPRs: leaderboardArray.reduce((sum, user) => sum + user.mergedPRs, 0),
+    //   committees: committeeStatsArray,
+    // });
 
     return NextResponse.json({
       leaderboard: leaderboardArray,
       committees: committeeStatsArray,
       recentActivity: sortedRecentActivity,
       lastUpdated: new Date().toISOString(),
+      stats: {
+        totalUniqueContributors: allContributors.size,
+        totalPRs: leaderboardArray.reduce(
+          (sum, user) => sum + user.mergedPRs,
+          0
+        ),
+      },
     });
   } catch (error) {
     console.error("Error fetching GitHub stats:", error);
