@@ -25,8 +25,8 @@ export async function POST(request) {
       return NextResponse.json({ error: "Invalid access" }, { status: 403 });
     }
 
-    // Create session token
-    const sessionToken = createBoxSession();
+    // Create cryptographically signed session token
+    const signedSessionToken = createBoxSession();
 
     const response = NextResponse.json({
       success: true,
@@ -34,8 +34,8 @@ export async function POST(request) {
       method: isAuthenticated ? "authenticated" : "counter",
     });
 
-    // Set session cookie
-    response.cookies.set("box-session", sessionToken, {
+    // Set session cookie with signed token
+    response.cookies.set("box-session", signedSessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",

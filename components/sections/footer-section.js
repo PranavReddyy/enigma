@@ -7,6 +7,7 @@ import {
   Instagram,
   Mail,
   Youtube,
+  Command,
 } from "lucide-react";
 import Image from "next/image";
 import { ChangelogSection } from "./changelog-section";
@@ -101,11 +102,28 @@ export function FooterSection() {
             <p className="text-slate-400 text-sm">
               © {new Date().getFullYear()} Enigma - Mahindra University
             </p>
-            <a href="https://www.itsbypranav.com/" target="_blank">
-              <p className="text-slate-400 text-sm mt-2 md:mt-0">
-                Built with thought
-              </p>
-            </a>
+            <button
+              onClick={() => {
+                const event = new KeyboardEvent("keydown", {
+                  key: "A",
+                  ctrlKey: true,
+                  shiftKey: true,
+                  bubbles: true,
+                });
+                window.dispatchEvent(event);
+              }}
+              className="text-slate-400 hover:text-white transition-colors opacity-0 hover:opacity-100"
+              title="Admin Panel (Ctrl+Shift+A)"
+            >
+              <Command className="w-3 h-3" />
+            </button>
+            <div className="flex items-center gap-2 mt-2 md:mt-0">
+              <a href="https://www.itsbypranav.com/" target="_blank">
+                <p className="text-slate-400 text-sm hover:text-white transition-colors">
+                  Built with thought
+                </p>
+              </a>
+            </div>
           </div>
         </div>
       </div>

@@ -79,6 +79,52 @@ export function FakeTerminal() {
   const [messageCache, setMessageCache] = useState(new Map()); 
   const [isMobileFullscreen, setIsMobileFullscreen] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [commands, setCommands] = useState({});
+
+  useEffect(() => {
+  const fetchCommands = async () => {
+    // Check cache first
+    const cached = localStorage.getItem('enigma-commands');
+    const cachedVersion = localStorage.getItem('enigma-commands-version');
+    const cacheTime = localStorage.getItem('enigma-commands-time');
+    
+    // Always fetch to check version
+    try {
+      const res = await fetch('/api/commands');
+      if (res.ok) {
+        const data = await res.json();
+        const serverVersion = data.cacheVersion;
+        
+        // Check if cache is valid
+        if (cached && cachedVersion && cacheTime) {
+          const age = Date.now() - parseInt(cacheTime);
+          const isFresh = age < 24 * 60 * 60 * 1000; // 24 hours
+          const isCurrentVersion = parseInt(cachedVersion) >= serverVersion;
+          
+          // Use cache if it's fresh AND current version
+          if (isFresh && isCurrentVersion) {
+            setCommands(JSON.parse(cached));
+            return;
+          }
+        }
+        
+        // Update cache with new data
+        setCommands(data.commands);
+        localStorage.setItem('enigma-commands', JSON.stringify(data.commands));
+        localStorage.setItem('enigma-commands-version', serverVersion.toString());
+        localStorage.setItem('enigma-commands-time', Date.now().toString());
+      }
+    } catch (error) {
+      console.error('Failed to fetch commands:', error);
+      // Fallback to cached data even if expired
+      if (cached) {
+        setCommands(JSON.parse(cached));
+      }
+    }
+  };
+
+  fetchCommands();
+}, []);
 
   useEffect(() => {
     if (!isMobileFullscreen) return;

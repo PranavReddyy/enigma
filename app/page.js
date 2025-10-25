@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { ConstructionPage } from "@/components/construction-page";
 import { HomePage } from "@/components/home-page";
+import { CommandPanel } from "@/components/command-panel";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
@@ -48,6 +49,7 @@ export default function Home() {
           <HomePage />
         </motion.div>
       )}
+      <CommandPanel />
     </AnimatePresence>
   );
 }
