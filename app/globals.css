@@ -231,3 +231,40 @@ body {
   scrollbar-width: none;  /* Firefox */
 }
 
+/* Prevent zoom on all inputs globally on mobile */
+@media screen and (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+.no-scroll-parent {
+  overflow: hidden !important;
+  position: fixed !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+  -webkit-overflow-scrolling: auto !important;
+}
+
+/* Prevent iOS rubber band effect */
+.no-scroll-parent * {
+  overscroll-behavior: contain !important;
+}
+
+/* Only allow scroll in marked scrollable areas */
+[data-scrollable="true"] {
+  touch-action: pan-y !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* Prevent double-tap zoom */
+* {
+  touch-action: manipulation;
+}
+
+/* Prevent pinch zoom on specific elements */
+.no-zoom {
+  touch-action: pan-y pinch-zoom;
+}

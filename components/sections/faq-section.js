@@ -83,7 +83,7 @@ const faqs = [
     ),
   },
   {
-    question: "What happens if I type enigma.mu/404?",
+    question: "What happens if I type mu-enigma.org/404?",
     answer:
       "Probably nothing. Or maybe everything. Sometimes the best discoveries come from missing pages.",
   },

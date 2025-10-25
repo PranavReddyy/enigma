@@ -4,6 +4,7 @@ import { MetalButton } from "@/components/ui/liquid-glass-button";
 import Marquee from "react-fast-marquee";
 import { FakeTerminal } from "@/components/term";
 import { useRouter, usePathname } from "next/navigation";
+import { useState } from "react";
 
 const sponsors = [
   {
@@ -61,7 +62,7 @@ export function HeroSection() {
   const router = useRouter();
 
   return (
-    <section className="min-h-screen flex flex-col w-full pt-24">
+    <section className="min-h-screen flex flex-col w-full pt-34">
       <div className="flex-1 flex items-center">
         <div className="max-w-7xl w-full mx-auto px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
@@ -70,29 +71,19 @@ export function HeroSection() {
               <div className="mb-4 flex items-center justify-center lg:justify-start">
                 <a
                   href="/hacktober"
-                  className="
-    inline-flex items-center rounded-sm
-    py-2 pl-2 pr-2 text-sm
-    border border-orange-500/50 
-    bg-orange-900/30 
-    backdrop-blur-sm
-    transition-all duration-300
-    hover:scale-101 hover:bg-orange-900/50
-    animate-[pulse-glow_4s_ease-in-out_infinite]
-  "
+                  className="inline-flex items-center rounded-sm py-2 pl-2 pr-2 text-sm border border-orange-500/50 bg-orange-900/30 backdrop-blur-sm transition-all duration-300 hover:scale-101 hover:bg-orange-900/50 animate-[pulse-glow_4s_ease-in-out_infinite]"
                 >
                   <span className="mr-2 rounded-sm bg-orange-500/80 px-2 py-0.5 text-xs font-semibold text-white">
                     Ongoing
                   </span>
-
                   <span className="text-slate-200">Hacktober 2025</span>
                 </a>
               </div>
+
               <div className="mb-6">
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-6xl font-extrabold leading-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent tracking-tight">
                   We are Enigma
                 </h1>
-
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-medium leading-tight text-slate-400">
                   We are Computer Science
                 </h2>
@@ -123,7 +114,13 @@ export function HeroSection() {
               </div>
             </div>
 
+            {/* Desktop Terminal */}
             <div className="hidden lg:flex flex-1 justify-center items-center min-h-72">
+              <FakeTerminal />
+            </div>
+
+            {/* Mobile Terminal - Show below content */}
+            <div className="lg:hidden w-full max-w-md mx-auto mt-3 mb-8">
               <FakeTerminal />
             </div>
           </div>

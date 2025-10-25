@@ -48,7 +48,7 @@ export async function POST(request) {
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || "Enigma <onboarding@resend.dev>",
       to: email,
-      subject: "Verify Your Email - Enigma Secret Club",
+      subject: "Verify Your Email - Enigma's The Box",
       html: `
         <div style="font-family: 'MS Sans Serif', monospace; background: #c0c0c0; padding: 20px;">
           <div style="background: #0000ff; color: white; padding: 10px; font-weight: bold;">

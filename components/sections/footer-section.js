@@ -9,6 +9,7 @@ import {
   Youtube,
 } from "lucide-react";
 import Image from "next/image";
+import { ChangelogSection } from "./changelog-section";
 
 const socialLinks = [
   {
@@ -49,6 +50,7 @@ const quickLinks = [
 export function FooterSection() {
   return (
     <footer className="bg-black border-t border-white/10">
+      <ChangelogSection />
       <div className="max-w-7xl w-full mx-auto px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex flex-col md:flex-row items-center gap-8">
