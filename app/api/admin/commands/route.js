@@ -38,12 +38,13 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { password, command, output, type, isArray } = body;
+    const { password, command, output, type, isArray, isExclusive } = body;
 
     console.log("POST request body:", {
       command,
       type,
       isArray,
+      isExclusive,
       outputLength: output?.length,
     });
 
@@ -66,6 +67,7 @@ export async function POST(request) {
           output: output,
           type: type || "output",
           isArray: isArray || false,
+          isExclusive: isExclusive || false,
           isActive: true,
         },
       ])
@@ -92,8 +94,16 @@ export async function POST(request) {
 // PUT - Update command
 export async function PUT(request) {
   try {
-    const { password, id, command, output, type, isArray, isActive } =
-      await request.json();
+    const {
+      password,
+      id,
+      command,
+      output,
+      type,
+      isArray,
+      isExclusive,
+      isActive,
+    } = await request.json();
 
     if (password !== process.env.SECRET_ADMIN_PASSWORD) {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
@@ -113,6 +123,7 @@ export async function PUT(request) {
         output: output,
         type: type || "output",
         isArray: isArray || false,
+        isExclusive: isExclusive || false,
         isActive: isActive !== undefined ? isActive : true,
         updatedAt: new Date().toISOString(),
       })
@@ -137,7 +148,7 @@ export async function PUT(request) {
   }
 }
 
-// DELETE - Delete command
+// DELETE - Delete command (unchanged)
 export async function DELETE(request) {
   try {
     const { searchParams } = new URL(request.url);

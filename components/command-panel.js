@@ -11,12 +11,13 @@ export function CommandPanel() {
   const [loading, setLoading] = useState(false);
   const [editingCommand, setEditingCommand] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
-  const [isSaving, setIsSaving] = useState(false); // NEW
+  const [isSaving, setIsSaving] = useState(false);
   const [editForm, setEditForm] = useState({
     command: "",
     output: "",
     type: "output",
     isArray: false,
+    isExclusive: false, // NEW
   });
 
   // Keyboard shortcut listener (Ctrl/Cmd + Shift + A)
@@ -104,6 +105,7 @@ export function CommandPanel() {
           output: cmd.output,
           type: cmd.type,
           isArray: cmd.isArray,
+          isExclusive: cmd.isExclusive,
           isActive: !cmd.isActive,
         }),
       });
@@ -132,6 +134,7 @@ export function CommandPanel() {
       output: cmd.output,
       type: cmd.type,
       isArray: cmd.isArray,
+      isExclusive: cmd.isExclusive || false,
     });
   };
 
@@ -143,6 +146,7 @@ export function CommandPanel() {
       output: "",
       type: "output",
       isArray: false,
+      isExclusive: false,
     });
   };
 
@@ -205,6 +209,7 @@ export function CommandPanel() {
           output: "",
           type: "output",
           isArray: false,
+          isExclusive: false,
         });
         fetchCommands();
       } else {
@@ -355,6 +360,21 @@ export function CommandPanel() {
                     />
                     <span className="text-white/70">array</span>
                   </label>
+                  <label className="flex items-center gap-1.5">
+                    <input
+                      type="checkbox"
+                      checked={editForm.isExclusive}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          isExclusive: e.target.checked,
+                        })
+                      }
+                      disabled={isSaving}
+                      className="rounded disabled:opacity-50"
+                    />
+                    <span className="text-white/70">exclusive</span>
+                  </label>
                 </div>
                 <div className="flex gap-2 pt-1">
                   <button
@@ -441,6 +461,21 @@ export function CommandPanel() {
                             />
                             <span className="text-white/70">array</span>
                           </label>
+                          <label className="flex items-center gap-1.5">
+                            <input
+                              type="checkbox"
+                              checked={editForm.isExclusive}
+                              onChange={(e) =>
+                                setEditForm({
+                                  ...editForm,
+                                  isExclusive: e.target.checked,
+                                })
+                              }
+                              disabled={isSaving}
+                              className="rounded disabled:opacity-50"
+                            />
+                            <span className="text-white/70">exclusive</span>
+                          </label>
                         </div>
                         <div className="flex gap-2 pt-1">
                           <button
@@ -508,6 +543,11 @@ export function CommandPanel() {
                           {cmd.isArray && (
                             <span className="text-[9px] text-white/50 bg-white/5 px-1.5 py-0.5 rounded border border-white/10">
                               array
+                            </span>
+                          )}
+                          {cmd.isExclusive && (
+                            <span className="text-[9px] text-orange-400 bg-orange-400/10 px-1.5 py-0.5 rounded border border-orange-400/20">
+                              exclusive
                             </span>
                           )}
                         </div>

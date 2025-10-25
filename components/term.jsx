@@ -80,6 +80,7 @@ export function FakeTerminal() {
   const [isMobileFullscreen, setIsMobileFullscreen] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [commands, setCommands] = useState({});
+  const [exclusiveCommands, setExclusiveCommands] = useState({});
 
   useEffect(() => {
   const fetchCommands = async () => {
@@ -272,6 +273,19 @@ export function FakeTerminal() {
       }
     } catch (error) {}
   };
+
+  const fetchExclusiveCommand = async (commandName) => {
+  try {
+    const res = await fetch(`/api/commands/exclusive?command=${encodeURIComponent(commandName)}`);
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
+  } catch (error) {
+    console.error('Failed to fetch exclusive command:', error);
+  }
+  return null;
+};
 
   const fetchMessages = async (pageNum = 1, append = false) => {
     if (loadingMessages) return;
@@ -612,8 +626,16 @@ export function FakeTerminal() {
         const outputType = commandLower === "hacktober" ? "hacktober" : "output";
         setHistory([...newHistory, { type: outputType, text: output }]);
       } else if (commandLower !== "") {
-        setHistory([...newHistory, { type: "output", text: `command not found: ${commandLower}` }]);
-      } else {
+  const exclusiveData = await fetchExclusiveCommand(commandLower);
+  
+  if (exclusiveData) {
+    const output = exclusiveData.output;
+    const outputType = exclusiveData.type === "hacktober" ? "hacktober" : "exclusive";
+    setHistory([...newHistory, { type: outputType, text: output }]);
+  } else {
+    setHistory([...newHistory, { type: "output", text: `command not found: ${commandLower}` }]);
+  }
+} else {
         setHistory(newHistory);
       }
       setInputValue("");
@@ -728,24 +750,26 @@ export function FakeTerminal() {
                     </div>
                   ))
                 : (
-                  <div
-                    className={
-                      line.type === "hacktober"
-                        ? "text-orange-400 whitespace-pre-wrap"
-                        : line.type === "error"
-                        ? "text-red-400 whitespace-pre-wrap"
-                        : line.type === "success"
-                        ? "text-cyan-400 whitespace-pre-wrap font-bold"
-                        : line.type === "divider"
-                        ? "text-slate-600 whitespace-pre-wrap"
-                        : line.type === "output"
-                        ? "text-green-400 whitespace-pre-wrap"
-                        : "whitespace-pre-wrap"
-                    }
-                  >
-                    {line.text}
-                  </div>
-                )
+  <div
+    className={
+      line.type === "hacktober"
+        ? "text-orange-400 whitespace-pre-wrap"
+        : line.type === "error"
+        ? "text-red-400 whitespace-pre-wrap"
+        : line.type === "success"
+        ? "text-cyan-400 whitespace-pre-wrap font-bold"
+        : line.type === "divider"
+        ? "text-slate-600 whitespace-pre-wrap"
+        : line.type === "exclusive"
+        ? "text-blue-400 whitespace-pre-wrap"
+        : line.type === "output"
+        ? "text-green-400 whitespace-pre-wrap"
+        : "whitespace-pre-wrap"
+    }
+  >
+    {line.text}
+  </div>
+)
               }
             </div>
           </div>
@@ -927,25 +951,27 @@ export function FakeTerminal() {
                           {subLine}
                         </div>
                       ))
-                    : (
-                      <div
-                        className={
-                          line.type === "hacktober"
-                            ? "text-orange-400 whitespace-pre-wrap"
-                            : line.type === "error"
-                            ? "text-red-400 whitespace-pre-wrap"
-                            : line.type === "success"
-                            ? "text-cyan-400 whitespace-pre-wrap font-bold"
-                            : line.type === "divider"
-                            ? "text-slate-600 whitespace-pre-wrap"
-                            : line.type === "output"
-                            ? "text-green-400 whitespace-pre-wrap"
-                            : "whitespace-pre-wrap"
-                        }
-                      >
-                        {line.text}
-                      </div>
-                    )
+                   : (
+  <div
+    className={
+      line.type === "hacktober"
+        ? "text-orange-400 whitespace-pre-wrap"
+        : line.type === "error"
+        ? "text-red-400 whitespace-pre-wrap"
+        : line.type === "success"
+        ? "text-cyan-400 whitespace-pre-wrap font-bold"
+        : line.type === "divider"
+        ? "text-slate-600 whitespace-pre-wrap"
+        : line.type === "exclusive"
+        ? "text-blue-400 whitespace-pre-wrap"
+        : line.type === "output"
+        ? "text-green-400 whitespace-pre-wrap"
+        : "whitespace-pre-wrap"
+    }
+  >
+    {line.text}
+  </div>
+)
                   }
                 </div>
               </div>

@@ -3,10 +3,12 @@ import { supabase } from "@/lib/supabase";
 
 export async function GET() {
   try {
+    // Fetch only non-exclusive, active commands for public cache
     const { data: commands, error } = await supabase
       .from("Command")
       .select("command, output, type, isArray, updatedAt")
-      .eq("isActive", true);
+      .eq("isActive", true)
+      .eq("isExclusive", false); // Only non-exclusive commands
 
     if (error) {
       console.error("Error fetching commands:", error);
