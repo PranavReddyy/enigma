@@ -70,13 +70,13 @@ export function HeroSection() {
               {/* Ongoing Event Tag */}
               <div className="mb-4 flex items-center justify-center lg:justify-start">
                 <a
-                  href="/hacktober"
-                  className="inline-flex items-center rounded-sm py-2 pl-2 pr-2 text-sm border border-orange-500/50 bg-orange-900/30 backdrop-blur-sm transition-all duration-300 hover:scale-101 hover:bg-orange-900/50 animate-[pulse-glow_4s_ease-in-out_infinite]"
+                  href="/gamecon"
+                  className="inline-flex items-center rounded-sm py-2 pl-2 pr-2 text-sm border border-red-500/50 bg-red-900/30 backdrop-blur-sm transition-all duration-300 hover:scale-101 hover:bg-red-900/50 animate-[pulse-glow_4s_ease-in-out_infinite]"
                 >
-                  <span className="mr-2 rounded-sm bg-orange-500/80 px-2 py-0.5 text-xs font-semibold text-white">
+                  <span className="mr-2 rounded-sm bg-red-500/80 px-2 py-0.5 text-xs font-semibold text-white">
                     Ongoing
                   </span>
-                  <span className="text-slate-200">Hacktober 2025</span>
+                  <span className="text-slate-200">GameCon 2025</span>
                 </a>
               </div>
 
