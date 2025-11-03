@@ -1,5 +1,5 @@
 "use client";
-
+ 
 import { useState, useEffect } from "react";
 import { ConstructionPage } from "@/components/construction-page";
 import { HomePage } from "@/components/home-page";
