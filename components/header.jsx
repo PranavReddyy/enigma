@@ -111,13 +111,13 @@ export const HeroHeader = () => {
                                 ))}
                             </ul>
 
-                            <Link
+                            {/* <Link
                                 href="/gamecon"
                                 className="relative text-sm font-medium text-red-500 hover:text-red-400 transition-all duration-200 overflow-hidden group hover:scale-105"
                             >                                
                                 <div className="absolute inset-0 rounded blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                 <span className="relative z-10 drop-shadow-sm">GameCon</span>
-                            </Link>
+                            </Link> */}
                         </div>
 
                         <div className="hidden lg:flex z-10">
@@ -172,7 +172,7 @@ export const HeroHeader = () => {
         </motion.div>
     </li>
 ))}
-<li className="overflow-hidden">
+{/* <li className="overflow-hidden">
     <motion.div variants={navLinkVariants} initial="initial" animate="open">
         <Link
             href="/gamecon"
@@ -186,7 +186,7 @@ export const HeroHeader = () => {
             <span className="relative z-10 drop-shadow-sm">GameCon</span>
         </Link>
     </motion.div>
-</li>
+</li> */}
                             </ul>
                             <div className="mt-16">
                                 <Button asChild variant="outline" size="lg" className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:border-white/30 backdrop-blur-sm">

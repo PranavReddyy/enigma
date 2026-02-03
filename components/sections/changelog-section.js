@@ -6,6 +6,11 @@ import { ChevronDown, GitCommit } from "lucide-react";
 
 const updates = [
   {
+    version: "v1.1",
+    date: "Feb 3, 2026",
+    items: ["AEON '26 Coming Soon"],
+  },
+  {
     version: "v1.01",
     date: "Oct 25, 2025",
     items: [

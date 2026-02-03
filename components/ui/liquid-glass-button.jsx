@@ -214,6 +214,13 @@ const colorVariants = {
     textColor: "text-[#FFF7F0]",
     textShadow: "[text-shadow:_0_-1px_0_rgb(124_45_18_/_100%)]",
   },
+  purple: {
+    outer: "bg-gradient-to-b from-[#7c3aed] to-[#a78bfa]",
+    inner: "bg-gradient-to-b from-[#8b5cf6] via-[#7c3aed] to-[#a78bfa]",
+    button: "bg-gradient-to-b from-[#a78bfa] to-[#7c3aed]",
+    textColor: "text-white",
+    textShadow: "[text-shadow:_0_-1px_0_rgb(124_58_237_/_100%)]",
+  },
 };
 
 const metalButtonVariants = (
