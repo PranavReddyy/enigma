@@ -103,7 +103,7 @@ export function WhatWeDoSection() {
 
         <div className="text-center">
           <a
-            href="https://chat.whatsapp.com/B6CszVrSOYVGjUsOgdiNbY"
+            href="https://chat.whatsapp.com/II8gQLBhHHQIKFrJBdx2LK"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl text-white font-medium transition-all duration-300 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)]"

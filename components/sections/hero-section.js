@@ -70,13 +70,15 @@ export function HeroSection() {
               {/* Ongoing Event Tag */}
               <div className="mb-4 flex items-center justify-center lg:justify-start">
                 <a
-                  href="/gamecon"
-                  className="inline-flex items-center rounded-sm py-2 pl-2 pr-2 text-sm border border-red-500/50 bg-red-900/30 backdrop-blur-sm transition-all duration-300 hover:scale-101 hover:bg-red-900/50 animate-[pulse-glow_4s_ease-in-out_infinite]"
+                  href="https://mu-aeon.com"
+                  className="inline-flex items-center rounded-sm py-2 pl-2 pr-2 text-sm border border-purple-400/50 bg-purple-900/30 backdrop-blur-sm transition-all duration-300 hover:scale-101 hover:bg-purple-900/50 animate-[pulse-glow_4s_ease-in-out_infinite]"
                 >
-                  <span className="mr-2 rounded-sm bg-red-500/80 px-2 py-0.5 text-xs font-semibold text-white">
-                    Ongoing
+                  <span className="mr-2 rounded-sm bg-purple-500/80 px-2 py-0.5 text-xs font-semibold text-white">
+                    Upcoming
                   </span>
-                  <span className="text-slate-200">GameCon 2025</span>
+                  <span className="text-slate-200">
+                    418 Hackathon @ AEON &apos;26
+                  </span>
                 </a>
               </div>
 
@@ -92,23 +94,15 @@ export function HeroSection() {
               <p className="text-base sm:text-lg lg:text-xl leading-relaxed text-slate-300 mb-4 font-normal max-w-xl mx-auto lg:mx-0">
                 The official Computer Science club of Mahindra University.
                 Building the future through code, innovation, and collaboration.
-                Explore{" "}
-                <a
-                  href="/hacktober"
-                  className="text-orange-400 hover:text-orange-300 underline decoration-orange-500/50 hover:decoration-orange-400 transition-colors duration-200"
-                >
-                  Hacktober 2025
-                </a>{""}
-                , our open source fest.
               </p>
 
               <div className="flex flex-row gap-3 justify-center lg:justify-start">
                 <MetalButton
-                  variant="red"
-                  onClick={() => router.push("/gamecon")}
+                  variant="purple"
+                  onClick={() => router.push("https://mu-aeon.com")}
                   size="lg"
                 >
-                  GameCon 2025
+                  418 Hackathon
                 </MetalButton>
                 <MetalButton
                   onClick={() =>
