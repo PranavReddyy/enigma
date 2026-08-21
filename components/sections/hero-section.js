@@ -70,15 +70,12 @@ export function HeroSection() {
               {/* Ongoing Event Tag */}
               <div className="mb-4 flex items-center justify-center lg:justify-start">
                 <a
-                  href="https://mu-aeon.com"
-                  className="inline-flex items-center rounded-sm py-2 pl-2 pr-2 text-sm border border-purple-400/50 bg-purple-900/30 backdrop-blur-sm transition-all duration-300 hover:scale-101 hover:bg-purple-900/50 animate-[pulse-glow_4s_ease-in-out_infinite]"
+                  className="inline-flex items-center rounded-sm py-2 pl-2 pr-2 text-sm border border-[#089cb4]/50 bg-[#089cb4]/20 backdrop-blur-sm transition-all duration-300 hover:scale-101 hover:bg-[#089cb4]/30 animate-[pulse-glow_4s_ease-in-out_infinite]"
                 >
-                  <span className="mr-2 rounded-sm bg-purple-500/80 px-2 py-0.5 text-xs font-semibold text-white">
+                  <span className="mr-2 rounded-sm bg-[#089cb4]/80 px-2 py-0.5 text-xs font-semibold text-white">
                     Upcoming
                   </span>
-                  <span className="text-slate-200">
-                    418 Hackathon @ AEON &apos;26
-                  </span>
+                  <span className="text-slate-200">Reboot '26 – The Orientation</span>
                 </a>
               </div>
 
