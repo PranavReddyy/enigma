@@ -75,7 +75,7 @@ export function HeroSection() {
                   <span className="mr-2 rounded-sm bg-[#089cb4]/80 px-2 py-0.5 text-xs font-semibold text-white">
                     Upcoming
                   </span>
-                  <span className="text-slate-200">Reboot '26 – The Orientation</span>
+                  <span className="text-slate-200">Reboot &apos;26 – The Orientation</span>
                 </a>
               </div>
 
