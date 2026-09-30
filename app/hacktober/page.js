@@ -508,7 +508,7 @@ export default function HacktoberPage() {
 
       <section className="h-[60vh] md:h-screen relative flex items-end">
         <Image
-          src="/hacktober-2026-brand.png"
+              src="/hacktober-2026-clean.png"
           alt="Hacktober 2026"
           fill
           className="object-cover object-center"
