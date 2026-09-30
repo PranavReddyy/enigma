@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect } from "react";
 
-const PlexusBackground = () => {
+const PlexusBackground = ({ color = "255, 255, 255" }) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -71,7 +71,7 @@ const PlexusBackground = () => {
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${config.particleOpacity})`;
+        ctx.fillStyle = `rgba(${color}, ${config.particleOpacity})`;
         ctx.fill();
         ctx.closePath();
       }
@@ -88,7 +88,7 @@ const PlexusBackground = () => {
             const opacity =
               (1 - distance / config.linkRadius) * config.maxLineOpacity;
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+            ctx.strokeStyle = `rgba(${color}, ${opacity})`;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
             ctx.stroke();
@@ -116,7 +116,7 @@ const PlexusBackground = () => {
       window.removeEventListener("resize", resizeCanvas);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [color]);
 
   return (
     <canvas
