@@ -15,7 +15,6 @@ import {
   Play,
   Brain,
   MonitorSmartphone,
-  Shield,
   Gamepad2,
   Globe,
 } from "lucide-react";
@@ -38,14 +37,6 @@ const subcommittees = [
     repo: {
       name: "Enigma SysCom",
       url: "https://github.com/MU-Enigma/Syscom-2025",
-    },
-  },
-  {
-    name: "CyberSec",
-    icon: Shield,
-    repo: {
-      name: "Cybersecurity Challenge",
-      url: "https://github.com/MU-Enigma/Enigma_CyberSec_2025",
     },
   },
   {
@@ -75,7 +66,7 @@ const LeaderboardCard = ({
 }) => (
   <motion.div
     className={`flex items-center gap-4 bg-white/[0.02] border border-white/[0.08] rounded-xl p-4 hover:bg-white/[0.04] hover:border-white/[0.12] transition-all duration-300 ${
-      isSearchResult ? "ring-1 ring-teal-400/20 border-teal-400/20" : ""
+      isSearchResult ? "ring-1 ring-[#34939B]/20 border-[#34939B]/20" : ""
     }`}
   >
     <div className="flex-shrink-0">
@@ -105,8 +96,8 @@ const LeaderboardCard = ({
       <p className="text-xs text-gray-500">{prs} PRs merged</p>
     </div>
     <div className="flex items-center gap-1">
-      <GitMerge className="w-3 h-3 text-teal-400" />
-      <span className="text-sm font-semibold text-teal-400">{prs}</span>
+      <GitMerge className="w-3 h-3 text-[#34939B]" />
+      <span className="text-sm font-semibold text-[#34939B]">{prs}</span>
     </div>
   </motion.div>
 );
@@ -197,23 +188,23 @@ const CommitteeTable = ({ committees, loading }) => {
               Committee
             </div>
             <div
-              className="col-span-2 text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-teal-400 transition-colors flex items-center gap-1"
+              className="col-span-2 text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-[#34939B] transition-colors flex items-center gap-1"
               onClick={() => handleSort("mergedPRs")}
             >
               PRs Merged
               {sortBy === "mergedPRs" && (
-                <span className="text-teal-400">
+                <span className="text-[#34939B]">
                   {sortOrder === "desc" ? "↓" : "↑"}
                 </span>
               )}
             </div>
             <div
-              className="col-span-2 text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-teal-400 transition-colors flex items-center gap-1"
+              className="col-span-2 text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-[#34939B] transition-colors flex items-center gap-1"
               onClick={() => handleSort("totalContributors")}
             >
               Contributors
               {sortBy === "totalContributors" && (
-                <span className="text-teal-400">
+                <span className="text-[#34939B]">
                   {sortOrder === "desc" ? "↓" : "↑"}
                 </span>
               )}
@@ -257,8 +248,8 @@ const CommitteeTable = ({ committees, loading }) => {
 
                   {/* Committee */}
                   <div className="col-span-6 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-teal-500/10 rounded-xl flex items-center justify-center group-hover:bg-teal-500/20 transition-colors">
-                      <Icon className="w-5 h-5 text-teal-400" />
+                    <div className="w-10 h-10 bg-[#34939B]/10 rounded-xl flex items-center justify-center group-hover:bg-[#34939B]/20 transition-colors">
+                      <Icon className="w-5 h-5 text-[#34939B]" />
                     </div>
                     <div>
                       <h3 className="text-white font-semibold text-base">
@@ -276,7 +267,7 @@ const CommitteeTable = ({ committees, loading }) => {
                       key={committee.mergedPRs}
                       initial={{ scale: 1.1 }}
                       animate={{ scale: 1 }}
-                      className="text-2xl font-bold text-teal-400"
+                      className="text-2xl font-bold text-[#34939B]"
                     >
                       {committee.mergedPRs}
                     </motion.div>
@@ -284,7 +275,7 @@ const CommitteeTable = ({ committees, loading }) => {
 
                   {/* Contributors */}
                   <div className="col-span-2">
-                    <div className="text-2xl font-bold text-teal-400">
+                    <div className="text-2xl font-bold text-[#34939B]">
                       {committee.totalContributors}
                     </div>
                   </div>
@@ -295,7 +286,7 @@ const CommitteeTable = ({ committees, loading }) => {
                       href={committee.repo.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-8 h-8 bg-white/[0.02] hover:bg-teal-500/10 border border-white/[0.04] hover:border-teal-500/20 rounded-lg flex items-center justify-center text-gray-400 hover:text-teal-400 transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-105"
+                      className="w-8 h-8 bg-white/[0.02] hover:bg-[#34939B]/10 border border-white/[0.04] hover:border-[#34939B]/20 rounded-lg flex items-center justify-center text-gray-400 hover:text-[#34939B] transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-105"
                     >
                       <ExternalLink className="w-4 h-4" />
                     </a>
@@ -323,7 +314,7 @@ const CommitteeTable = ({ committees, loading }) => {
             onClick={() => handleSort("mergedPRs")}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
               sortBy === "mergedPRs"
-                ? "bg-teal-500/20 text-teal-400 border border-teal-500/30"
+                ? "bg-[#34939B]/20 text-[#34939B] border border-[#34939B]/30"
                 : "bg-white/[0.05] text-gray-400 border border-white/[0.08]"
             }`}
           >
@@ -333,7 +324,7 @@ const CommitteeTable = ({ committees, loading }) => {
             onClick={() => handleSort("totalContributors")}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
               sortBy === "totalContributors"
-                ? "bg-teal-500/20 text-teal-400 border border-teal-500/30"
+                ? "bg-[#34939B]/20 text-[#34939B] border border-[#34939B]/30"
                 : "bg-white/[0.05] text-gray-400 border border-white/[0.08]"
             }`}
           >
@@ -372,8 +363,8 @@ const CommitteeTable = ({ committees, loading }) => {
                 >
                   {rank}
                 </div>
-                <div className="w-10 h-10 bg-teal-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-5 h-5 text-teal-400" />
+                <div className="w-10 h-10 bg-[#34939B]/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-5 h-5 text-[#34939B]" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-white font-semibold text-base truncate">
@@ -387,7 +378,7 @@ const CommitteeTable = ({ committees, loading }) => {
                   href={committee.repo.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 bg-white/[0.02] hover:bg-teal-500/10 border border-white/[0.04] hover:border-teal-500/20 rounded-lg flex items-center justify-center text-gray-400 hover:text-teal-400 transition-all duration-200 hover:scale-105 flex-shrink-0"
+                  className="w-8 h-8 bg-white/[0.02] hover:bg-[#34939B]/10 border border-white/[0.04] hover:border-[#34939B]/20 rounded-lg flex items-center justify-center text-gray-400 hover:text-[#34939B] transition-all duration-200 hover:scale-105 flex-shrink-0"
                 >
                   <ExternalLink className="w-4 h-4" />
                 </a>
@@ -400,7 +391,7 @@ const CommitteeTable = ({ committees, loading }) => {
                     key={committee.mergedPRs}
                     initial={{ scale: 1.05 }}
                     animate={{ scale: 1 }}
-                    className="text-2xl font-bold text-teal-400 mb-1"
+                    className="text-2xl font-bold text-[#34939B] mb-1"
                   >
                     {committee.mergedPRs}
                   </motion.div>
@@ -409,7 +400,7 @@ const CommitteeTable = ({ committees, loading }) => {
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-teal-400 mb-1">
+                  <div className="text-2xl font-bold text-[#34939B] mb-1">
                     {committee.totalContributors}
                   </div>
                   <div className="text-xs text-gray-500 font-medium">
@@ -513,11 +504,11 @@ export default function HacktoberPage() {
   return (
     <div className="min-h-screen bg-transparent text-white">
       <HeroHeader />
-      <PlexusBackground color="45, 212, 191" />
+      <PlexusBackground color="52, 147, 155" />
 
       <section className="h-[60vh] md:h-screen relative flex items-end">
         <Image
-          src="/hacktober-2026.png"
+          src="/hacktober-2026-brand.png"
           alt="Hacktober 2026"
           fill
           className="object-cover object-center"
@@ -531,7 +522,7 @@ export default function HacktoberPage() {
         <div className="max-w-5xl mx-auto px-6 lg:px-8">
           <section className="md:pt-5 pb-24">
             <div className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-teal-400 to-cyan-500 bg-clip-text text-transparent">
+              <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-[#34939B] to-[#215F68] bg-clip-text text-transparent">
                 What is Hacktoberfest?
               </h2>
             </div>
@@ -542,7 +533,7 @@ export default function HacktoberPage() {
                 by contributing to open-source projects.
               </p>
               <p className="text-xl text-gray-300 leading-relaxed">
-                Enigma&apos;s 2026 edition brings together repositories from five
+                Enigma&apos;s 2026 edition brings together repositories from four
                 subcommittees, giving you the opportunity to ship meaningful
                 contributions and learn new technologies.
               </p>
@@ -551,7 +542,7 @@ export default function HacktoberPage() {
 
           <section className="pb-24">
             <div className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-teal-400 to-cyan-500 bg-clip-text text-transparent">
+              <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-[#34939B] to-[#215F68] bg-clip-text text-transparent">
                 How to Contribute
               </h2>
             </div>
@@ -569,7 +560,7 @@ export default function HacktoberPage() {
                           href="https://hacktoberfest.com"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-teal-400 underline hover:text-teal-300 transition-colors"
+                          className="text-[#34939B] underline hover:text-[#34939B] transition-colors"
                         >
                           hacktoberfest.com
                         </a>
@@ -593,7 +584,7 @@ export default function HacktoberPage() {
                   },
                 ].map((step, index) => (
                   <div key={index} className="text-center">
-                    <div className="w-12 h-12 bg-teal-500 rounded-2xl flex items-center justify-center text-white text-xl font-bold mx-auto mb-4">
+                    <div className="w-12 h-12 bg-[#34939B] rounded-2xl flex items-center justify-center text-white text-xl font-bold mx-auto mb-4">
                       {step.num}
                     </div>
                     <h3 className="text-white font-semibold mb-2">
@@ -607,8 +598,8 @@ export default function HacktoberPage() {
               </div>
               <div className="bg-white/[0.02] border border-white/[0.08] rounded-2xl p-8">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-teal-500/10 rounded-xl flex items-center justify-center">
-                    <Code2 className="w-5 h-5 text-teal-400" />
+                  <div className="w-10 h-10 bg-[#34939B]/10 rounded-xl flex items-center justify-center">
+                    <Code2 className="w-5 h-5 text-[#34939B]" />
                   </div>
                   <h3 className="text-xl font-semibold text-white">
                     Quick Start Commands
@@ -640,7 +631,7 @@ git push origin feature/your-feature-name
 
           <section className="pb-24">
             <div className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-teal-400 to-cyan-500 bg-clip-text text-transparent">
+              <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-[#34939B] to-[#215F68] bg-clip-text text-transparent">
                 How-to Videos
               </h2>
               <p className="text-xl text-gray-300 max-w-2xl mx-auto">
@@ -652,8 +643,8 @@ git push origin feature/your-feature-name
             <div className="max-w-4xl mx-auto">
               <div className="bg-white/[0.02] border border-white/[0.08] rounded-2xl p-8">
                 <div className="flex items-center gap-4 mb-8">
-                  <div className="w-12 h-12 bg-teal-500/10 rounded-2xl flex items-center justify-center">
-                    <Play className="w-6 h-6 text-teal-400" />
+                  <div className="w-12 h-12 bg-[#34939B]/10 rounded-2xl flex items-center justify-center">
+                    <Play className="w-6 h-6 text-[#34939B]" />
                   </div>
                   <h3 className="text-2xl font-semibold text-white">
                     Git & GitHub Basics
@@ -679,7 +670,7 @@ git push origin feature/your-feature-name
           <section className="pb-24">
             <div className="text-center mb-16">
               <div className="flex items-center justify-center gap-3 mb-6">
-                <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-teal-400 to-cyan-500 bg-clip-text text-transparent">
+                <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#34939B] to-[#215F68] bg-clip-text text-transparent">
                   Live Dashboard
                 </h2>
                 {isConnected && (
@@ -718,7 +709,7 @@ git push origin feature/your-feature-name
                           placeholder="Search contributors..."
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          className="w-full pl-10 pr-10 py-3 bg-white/[0.02] border border-white/[0.08] rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-teal-400/50 focus:ring-1 focus:ring-teal-400/20 transition-all duration-300"
+                          className="w-full pl-10 pr-10 py-3 bg-white/[0.02] border border-white/[0.08] rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#34939B]/50 focus:ring-1 focus:ring-[#34939B]/20 transition-all duration-300"
                         />
                         {searchQuery && (
                           <button
@@ -742,7 +733,7 @@ git push origin feature/your-feature-name
                   <div className="bg-white/[0.02] border border-white/[0.08] rounded-2xl p-2">
                     {loading ? (
                       <div className="flex justify-center py-16">
-                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-teal-400 border-t-transparent"></div>
+                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#34939B] border-t-transparent"></div>
                       </div>
                     ) : filteredLeaderboard.length > 0 ? (
                       <div className="space-y-1 h-80 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20 px-2">
@@ -800,7 +791,7 @@ git push origin feature/your-feature-name
                       Recent Activity
                     </h3>
                     <div className="flex items-center gap-2">
-                      <GitMerge className="w-4 h-4 text-teal-400" />
+                      <GitMerge className="w-4 h-4 text-[#34939B]" />
                       <span className="text-xs text-gray-500">
                         Latest merges
                       </span>
@@ -855,7 +846,7 @@ git push origin feature/your-feature-name
                                 </span>
                               </div>
                               <div className="flex items-center gap-2 mt-0.5">
-                                <span className="text-xs text-teal-400 font-medium">
+                                <span className="text-xs text-[#34939B] font-medium">
                                   {activity.repo}
                                 </span>
                                 <span className="text-xs text-gray-600">•</span>
@@ -893,7 +884,7 @@ git push origin feature/your-feature-name
           <section className="pb-24">
             <div className="text-center mb-16">
               <div className="flex items-center justify-center gap-3 mb-6">
-                <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-teal-400 to-cyan-500 bg-clip-text text-transparent">
+                <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#34939B] to-[#215F68] bg-clip-text text-transparent">
                   Committee Leaderboard
                 </h2>
               </div>
@@ -917,15 +908,15 @@ git push origin feature/your-feature-name
 
           <section className="pb-24">
             <div className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-teal-400 to-cyan-500 bg-clip-text text-transparent">
+              <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-[#34939B] to-[#215F68] bg-clip-text text-transparent">
                 Rewards & Incentives
               </h2>
             </div>
 
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               <div className="bg-white/[0.02] border border-white/[0.08] rounded-2xl p-8 text-center hover:bg-white/[0.04] transition-all duration-300">
-                <div className="w-16 h-16 bg-teal-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Award className="w-8 h-8 text-teal-400" />
+                <div className="w-16 h-16 bg-[#34939B]/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <Award className="w-8 h-8 text-[#34939B]" />
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-4">
                   2026 Digital Badges
@@ -937,8 +928,8 @@ git push origin feature/your-feature-name
               </div>
 
               <div className="bg-white/[0.02] border border-white/[0.08] rounded-2xl p-8 text-center hover:bg-white/[0.04] transition-all duration-300">
-                <div className="w-16 h-16 bg-teal-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Gift className="w-8 h-8 text-teal-400" />
+                <div className="w-16 h-16 bg-[#34939B]/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <Gift className="w-8 h-8 text-[#34939B]" />
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-4">
                   Enigma 2026 Merch
@@ -953,7 +944,7 @@ git push origin feature/your-feature-name
 
           <section className="pb-24">
             <div className="max-w-4xl mx-auto text-center">
-              <div className="bg-gradient-to-r from-teal-500/5 to-cyan-500/5 border border-teal-500/20 rounded-3xl p-12">
+              <div className="bg-gradient-to-r from-[#34939B]/5 to-[#215F68]/5 border border-[#34939B]/20 rounded-3xl p-12">
                 <h3 className="text-3xl font-bold text-white mb-6">
                   Ready to contribute in 2026?
                 </h3>
@@ -964,7 +955,7 @@ git push origin feature/your-feature-name
                   href="https://github.com/MU-Enigma"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-3 px-8 py-4 bg-teal-500 hover:bg-teal-600 rounded-2xl text-white font-semibold text-lg transition-all duration-300 hover:scale-105"
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-[#34939B] hover:bg-[#215F68] rounded-2xl text-white font-semibold text-lg transition-all duration-300 hover:scale-105"
                 >
                   <GitFork className="w-5 h-5" />
                   View All Repositories

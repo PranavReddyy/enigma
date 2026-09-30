@@ -26,7 +26,7 @@
 
 - **Interactive Landing Page**: Modern design with smooth animations
 - **Events Management**: Dynamic events calendar with filtering and search
-- **Committee Showcase**: Five specialized committees (AI/ML, WebDev, SysCom, GameDev, Cyber)
+- **Committee Showcase**: Four specialized committees (AI/ML, WebDev, SysCom, GameDev)
 - **Real-time Updates**: Live leaderboards and statistics
 - **Responsive Design**: Optimized for all devices
 
