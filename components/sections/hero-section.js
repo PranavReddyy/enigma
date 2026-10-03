@@ -80,32 +80,32 @@ export function HeroSection() {
               </div>
 
               <div className="mb-6">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-6xl font-extrabold leading-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent tracking-tight">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-6xl font-extrabold leading-tight bg-gradient-to-r from-cyan-50 via-cyan-100 to-cyan-300 bg-clip-text text-transparent tracking-tight">
                   We are Enigma
                 </h1>
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-medium leading-tight text-slate-400">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-medium leading-tight text-cyan-200/80">
                   We are Computer Science
                 </h2>
               </div>
 
-              <p className="text-base sm:text-lg lg:text-xl leading-relaxed text-slate-300 mb-4 font-normal max-w-xl mx-auto lg:mx-0">
+              <p className="text-base sm:text-lg lg:text-xl leading-relaxed text-cyan-100/80 mb-4 font-normal max-w-xl mx-auto lg:mx-0">
                 The official Computer Science club of Mahindra University.
                 Building the future through code, innovation, and collaboration.
               </p>
 
               <div className="flex flex-row gap-3 justify-center lg:justify-start">
                 <MetalButton
-                  variant="purple"
-                  onClick={() => router.push("https://mu-aeon.com")}
+                  variant="primary"
+                  onClick={() => router.push("/hacktober")}
                   size="lg"
                 >
-                  418 Hackathon
+                  Hacktober Page
                 </MetalButton>
                 <MetalButton
                   onClick={() =>
                     router.push("https://thesparchive.com/projectinit")
                   }
-                  variant="primary"
+                  variant="orange"
                   size="lg"
                 >
                   Projects Initiative
@@ -129,7 +129,7 @@ export function HeroSection() {
       <div className="pb-12 lg:pb-16">
         <div className="max-w-7xl w-full mx-auto px-6 lg:px-8">
           <div className="text-center mb-8">
-            <h3 className="text-sm lg:text-base font-medium text-slate-400">
+            <h3 className="text-sm lg:text-base font-medium text-cyan-200/80">
               Past Collaborations
             </h3>
           </div>

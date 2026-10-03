@@ -115,3 +115,20 @@ enigma/
 - **Database**: Supabase for events and data management
 - **Animations**: Framer Motion for smooth interactions
 - **Deployment**: Vercel for hosting and CI/CD
+
+## Hacktober 2026 tracking
+
+The five challenge repositories are configured once in `lib/hacktober-repositories.js` and shared by the Hacktober page, statistics API, and GitHub webhook.
+
+- Only merged pull requests count. Contributor totals are unique per track and across the combined leaderboard.
+- The page refreshes statistics every minute; configured Pusher subscriptions also trigger updates after merge webhooks.
+- Configure a server-only `GITHUB_TOKEN` with read access to the challenge repositories. Public repositories can use the REST fallback without a token, subject to GitHub's lower unauthenticated rate limit.
+- Unavailable repositories display dashes and an incomplete-data notice rather than confirmed zero totals.
+- For realtime updates, configure `PUSHER_APP_ID`, `PUSHER_SECRET`, `NEXT_PUBLIC_PUSHER_KEY`, `NEXT_PUBLIC_PUSHER_CLUSTER`, and `GITHUB_WEBHOOK_SECRET`. Add a pull-request webhook on each challenge repository pointing to `https://YOUR_SITE/api/webhook/github`, using JSON payloads and the matching secret. Polling works without Pusher.
+- Keep the application's existing Supabase, authentication, and email environment variables configured for the production build. Never commit credentials.
+
+Run the focused tracking tests with:
+
+```bash
+node --experimental-vm-modules --test tests/hacktober.test.mjs
+```

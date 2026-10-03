@@ -210,6 +210,8 @@ export function FakeTerminal() {
     if (!chatMode) return;
 
     fetchMessages();
+    if (!pusherClient) return;
+
     const channel = pusherClient.subscribe("secret-chat");
 
     channel.bind("pusher:subscription_succeeded", () => {
