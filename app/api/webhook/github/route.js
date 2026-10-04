@@ -2,18 +2,15 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { pusher } from "@/lib/pusher";
 
-const REPO_COMMITTEE_MAP = {
-  "Enigma-AIML25": "AI/ML",
-  "Syscom-2025": "SysCom",
-  "Enigma_CyberSec_2025": "CyberSec",
-  "GAMEDEV-2025": "GameDev",
-  "Enigma-WebDev-FoodApp": "WebDev",
-};
+import { REPO_COMMITTEE_MAP, HACKTOBER_ORG } from "@/lib/hacktober-repositories";
 
 const TRACKED_REPOS = Object.keys(REPO_COMMITTEE_MAP);
 
 export async function POST(request) {
   try {
+    if (!process.env.GITHUB_WEBHOOK_SECRET) {
+      return NextResponse.json({ error: "Webhook is not configured" }, { status: 503 });
+    }
     const body = await request.text();
     const signature = request.headers.get("x-hub-signature-256");
 
@@ -28,8 +25,8 @@ export async function POST(request) {
 
     const payload = JSON.parse(body);
 
-    if (payload.repository && TRACKED_REPOS.includes(payload.repository.name)) {
-      if (payload.action === "closed" && payload.pull_request?.merged) {
+    if (payload.repository?.owner?.login === HACKTOBER_ORG && TRACKED_REPOS.includes(payload.repository.name)) {
+      if (request.headers.get("x-github-event") === "pull_request" && payload.action === "closed" && payload.pull_request?.merged) {
         const prData = {
           repo: payload.repository.name,
           committee: REPO_COMMITTEE_MAP[payload.repository.name],

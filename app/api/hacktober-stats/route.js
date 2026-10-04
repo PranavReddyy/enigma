@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { Octokit } from "@octokit/rest";
+import { REPO_COMMITTEE_MAP, HACKTOBER_ORG } from "@/lib/hacktober-repositories";
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
@@ -15,15 +16,7 @@ function getTimeAgo(date) {
   return `${Math.floor(diffInSeconds / 86400)}d ago`;
 }
 
-const ORG_NAME = "MU-Enigma";
-
-const REPO_COMMITTEE_MAP = {
-  "Enigma-AIML25": "AI/ML",
-  "Syscom-2025": "SysCom",
-  Enigma_CyberSec_2025: "CyberSec",
-  "GAMEDEV-2025": "GameDev",
-  "Enigma-WebDev-FoodApp": "WebDev",
-};
+const ORG_NAME = HACKTOBER_ORG;
 
 const REPOS = Object.keys(REPO_COMMITTEE_MAP);
 
@@ -39,7 +32,7 @@ async function fetchAllMergedPRs(owner, repo) {
       const { data: prs } = await octokit.rest.pulls.list({
         owner,
         repo,
-        state: "all",
+        state: "closed",
         per_page: 100,
         page,
         sort: "created",
@@ -68,7 +61,7 @@ async function fetchAllMergedPRs(owner, repo) {
         `Error fetching page ${page} for ${owner}/${repo}:`,
         error.message
       );
-      hasMore = false;
+      throw error;
     }
   }
 
@@ -130,7 +123,7 @@ async function fetchAllMergedPRsGraphQL(owner, repo) {
       // );
     } catch (error) {
       console.error(`GraphQL error for ${owner}/${repo}:`, error.message);
-      hasNextPage = false;
+      throw error;
     }
   }
 
@@ -145,6 +138,7 @@ export async function GET() {
     const leaderboard = new Map();
     const committeeStats = new Map();
     const recentActivity = [];
+    const unavailableRepositories = [];
 
     // Initialize committee stats
     const committees = [...new Set(Object.values(REPO_COMMITTEE_MAP))];
@@ -160,7 +154,14 @@ export async function GET() {
     for (const repoName of REPOS) {
       try {
         // Use GraphQL method for better pagination
-        const mergedPRs = await fetchAllMergedPRsGraphQL(ORG_NAME, repoName);
+        const mergedPRs = process.env.GITHUB_TOKEN
+          ? await fetchAllMergedPRsGraphQL(ORG_NAME, repoName)
+          : (await fetchAllMergedPRs(ORG_NAME, repoName)).map((pr) => ({
+              number: pr.number,
+              title: pr.title,
+              author: pr.user ? { login: pr.user.login, avatarUrl: pr.user.avatar_url } : null,
+              mergedAt: pr.merged_at,
+            }));
 
         const committeeName = REPO_COMMITTEE_MAP[repoName];
         const stats = committeeStats.get(committeeName);
@@ -207,6 +208,7 @@ export async function GET() {
         //   `${committeeName}: ${stats.mergedPRs} PRs, ${stats.totalContributors.size} unique contributors`
         // );
       } catch (error) {
+        unavailableRepositories.push(repoName);
         console.error(
           `Error processing ${ORG_NAME}/${repoName}:`,
           error.message
@@ -228,6 +230,7 @@ export async function GET() {
     const committeeStatsArray = Array.from(committeeStats.values()).map(
       (stats) => ({
         name: stats.name,
+        available: !unavailableRepositories.some((repo) => REPO_COMMITTEE_MAP[repo] === stats.name),
         mergedPRs: stats.mergedPRs,
         totalContributors: stats.totalContributors.size, // Count unique contributors per committee
       })
@@ -252,6 +255,8 @@ export async function GET() {
     // });
 
     return NextResponse.json({
+      partial: unavailableRepositories.length > 0,
+      unavailableRepositories,
       leaderboard: leaderboardArray,
       committees: committeeStatsArray,
       recentActivity: sortedRecentActivity,

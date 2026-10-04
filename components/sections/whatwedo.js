@@ -6,7 +6,6 @@ import {
   MonitorSmartphone,
   Shield,
   Gamepad2,
-  Globe,
   Users,
 } from "lucide-react";
 
@@ -31,11 +30,6 @@ const features = [
     title: "GameDev",
     description: "Interactive experiences and game design",
   },
-  {
-    icon: Globe,
-    title: "CyberSec",
-    description: "Security research and ethical hacking",
-  },
 ];
 
 export function WhatWeDoSection() {
@@ -47,12 +41,12 @@ export function WhatWeDoSection() {
             What We Do
           </h2>
           <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-            Five specialized committees driving innovation across computer
+            Four specialized committees driving innovation across computer
             science
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (

@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
-import { Menu, X, Github } from 'lucide-react'
+import { Menu, X, Github, GitPullRequest } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import React from 'react'
 import { cn } from '@/lib/utils'
@@ -14,6 +14,7 @@ const menuItems = [
     { name: 'What We Do', href: '#services' },
     // { name: 'Meet the Team', href: '#team' },
     { name: 'Events', href: '/events' },
+    { name: 'Hacktober', href: '/hacktober', icon: GitPullRequest },
     { name: 'FAQ', href: '#faq' },
 ]
 
@@ -95,7 +96,7 @@ export const HeroHeader = () => {
 
     return (
         <header className="relative">
-            <nav className="fixed z-50 w-full transform-gpu">
+            <nav className="fixed top-0 inset-x-0 z-50 w-full transform-gpu">
                 <div className={cn('mt-4 max-w-7xl px-6 transition-all duration-300 lg:px-8 mx-4 lg:mx-auto', isScrolled && 'bg-black/60 max-w-5xl rounded-2xl border border-white/10 backdrop-blur-xl shadow-xl')} style={{ outline: 'none', border: isScrolled ? 'none' : 'none' }}>
                     <div className="relative flex items-center justify-between py-4 lg:py-5">
                         <Link href="/" aria-label="home" className="flex items-center space-x-2 z-10 focus:outline-none">
@@ -106,7 +107,7 @@ export const HeroHeader = () => {
                            <ul className="flex gap-8 text-sm">
                                 {menuItems.map((item, index) => (
                                     <li key={index}>
-                                        <Link href={item.href} onClick={(e) => handleNavClick(e, item.href)} className="text-gray-300 hover:text-white transition-colors duration-200 font-medium focus:outline-none">{item.name}</Link>
+                                        <Link href={item.href} onClick={(e) => handleNavClick(e, item.href)} className="text-cyan-100/80 hover:text-cyan-200 transition-colors duration-200 font-medium focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-300" aria-current={pathname === item.href ? "page" : undefined}>{item.icon && <item.icon className="inline-block w-4 h-4 mr-2" aria-hidden="true" />}{item.name}</Link>
                                     </li>
                                 ))}
                             </ul>
@@ -165,9 +166,9 @@ export const HeroHeader = () => {
             <Link
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
-                className="text-4xl font-medium text-gray-300 transition-colors hover:text-white"
+                className="text-4xl font-medium text-cyan-100/80 transition-colors hover:text-cyan-200"
             >
-                {item.name}
+                {item.icon && <item.icon className="inline-block w-4 h-4 mr-2" aria-hidden="true" />}{item.name}
             </Link>
         </motion.div>
     </li>
