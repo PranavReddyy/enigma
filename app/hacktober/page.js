@@ -530,17 +530,17 @@ export default function HacktoberPage() {
                 {[
                   {
                     num: "1",
-                    title: "Register",
+                    title: "Choose",
                     desc: (
                       <>
-                        Sign up on{" "}
+                        Pick a repository from the domain of your interest!{" "}
                         <a
-                          href="https://hacktoberfest.com"
+                          href="https://github.com/MU-Enigma"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-[#67DBE5] underline hover:text-[#67DBE5] transition-colors"
                         >
-                          hacktoberfest.com
+                          Explore our GitHub
                         </a>
                       </>
                     ),
@@ -548,7 +548,7 @@ export default function HacktoberPage() {
                   {
                     num: "2",
                     title: "Fork",
-                    desc: "Choose a repository from our committees",
+                    desc: "Fork your chosen repository on GitHub",
                   },
                   {
                     num: "3",
