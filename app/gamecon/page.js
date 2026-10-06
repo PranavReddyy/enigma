@@ -192,7 +192,7 @@ export default function GameCon() {
                 GameCon 2025 Trailer
               </h2>
               <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-                Watch the official trailer and get ready for the ultimate gaming festival
+                Watch the official trailer from our 2025 gaming festival
               </p>
             </div>
 
@@ -227,13 +227,13 @@ export default function GameCon() {
           <section className="pb-24 pt-8">
             <div className="text-center mb-16">
               <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-red-500 to-red-800 bg-clip-text text-transparent pb-2">
-                Register Now
+                GameCon 2025 Highlights
               </h2>
               <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-                Step into the arena of creativity, competition, and innovation
+                A look back at creativity, competition, and innovation
               </p>
               <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-                Join <span className="font-semibold text-white">GameCon 2025</span> and make your mark.
+                Registration for <span className="font-semibold text-white">GameCon 2025</span> has closed.
               </p>
             </div>
 
@@ -260,12 +260,9 @@ export default function GameCon() {
                       <p className="text-gray-400 text-sm mb-6 text-center">
                         {event.description}
                       </p>
-                      <a
-                        href={event.registerUrl}
-                        className="block w-full px-6 py-3 bg-red-500 hover:bg-red-600 rounded-xl text-white font-semibold text-center transition-all duration-300 hover:scale-105"
-                      >
-                        Register
-                      </a>
+                      <span className="block w-full px-6 py-3 bg-white/5 rounded-xl text-gray-400 font-semibold text-center">
+                        Registration closed
+                      </span>
                     </div>
                   </div>
                 );
@@ -277,7 +274,7 @@ export default function GameCon() {
           <section className="pb-24">
             <div className="text-center mb-16">
               <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-red-500 to-red-800 bg-clip-text text-transparent pb-2">
-                Event Timeline
+                2025 Event Timeline
               </h2>
               <p className="text-xl text-gray-300 max-w-2xl mx-auto">
                 Mark your calendars and don&apos;t miss out on any of the action

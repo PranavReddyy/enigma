@@ -41,10 +41,10 @@ const socialLinks = [
 ];
 
 const quickLinks = [
-  { name: "About", href: "#about" },
-  { name: "What We Do", href: "#services" },
+  { name: "About", href: "/#about" },
+  { name: "What We Do", href: "/#services" },
   // { name: "Team", href: "#team" },//
-  { name: "FAQ", href: "#faq" },
+  { name: "FAQ", href: "/#faq" },
   { name: "Events", href: "/events" },
 ];
 

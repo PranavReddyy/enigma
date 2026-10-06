@@ -5,7 +5,7 @@ import { TypeAnimation } from "react-type-animation";
 import { useAuth } from "@/lib/auth-context";
 import { pusherClient } from "@/lib/pusher";
 
-const commands = {
+const DEFAULT_COMMANDS = {
   help: [
     "Available commands:",
     "  about          - Learn more about Enigma",
@@ -34,7 +34,7 @@ const commands = {
   about: "Enigma is the official Computer Science club of Mahindra University. We are passionate about building the future through code, innovation, and collaboration.",
   projects: "Projects Initiative launched, check out the button to the left of me",
   contact: "You can find us on Instagram, LinkedIn, or send a carrier pigeon to the CS department.",
-  hacktober: "Join Hacktober Fest 2026! Choose a repository from one of our five tracks, fork it, and contribute. Merged PRs count toward the leaderboard. Visit /hacktober to get started!", 
+  hacktober: "Join Hacktober Fest 2026! Choose a repository from one of our five tracks, fork it, and contribute. Merged PRs count toward the leaderboard. Visit /hacktober to get started!",
   neofetch: [
     "        ########  ##    ##    .   /",
     "        ##        ###   ##       /",
@@ -79,7 +79,7 @@ export function FakeTerminal() {
   const [messageCache, setMessageCache] = useState(new Map()); 
   const [isMobileFullscreen, setIsMobileFullscreen] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [commands, setCommands] = useState({});
+  const [commands, setCommands] = useState(DEFAULT_COMMANDS);
   const [exclusiveCommands, setExclusiveCommands] = useState({});
 
   useEffect(() => {
@@ -104,13 +104,13 @@ export function FakeTerminal() {
           
           // Use cache if it's fresh AND current version
           if (isFresh && isCurrentVersion) {
-            setCommands(JSON.parse(cached));
+            setCommands({ ...DEFAULT_COMMANDS, ...JSON.parse(cached), hacktober: DEFAULT_COMMANDS.hacktober });
             return;
           }
         }
         
         // Update cache with new data
-        setCommands(data.commands);
+        setCommands({ ...DEFAULT_COMMANDS, ...data.commands, hacktober: DEFAULT_COMMANDS.hacktober });
         localStorage.setItem('enigma-commands', JSON.stringify(data.commands));
         localStorage.setItem('enigma-commands-version', serverVersion.toString());
         localStorage.setItem('enigma-commands-time', Date.now().toString());
@@ -119,7 +119,7 @@ export function FakeTerminal() {
       console.error('Failed to fetch commands:', error);
       // Fallback to cached data even if expired
       if (cached) {
-        setCommands(JSON.parse(cached));
+        setCommands({ ...DEFAULT_COMMANDS, ...JSON.parse(cached), hacktober: DEFAULT_COMMANDS.hacktober });
       }
     }
   };

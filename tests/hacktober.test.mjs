@@ -4,10 +4,10 @@ import { readFile } from "node:fs/promises";
 import vm from "node:vm";
 import crypto from "node:crypto";
 
-async function loadRoute(path, { token, secret, rest, graphql, trigger, publicRest } = {}) {
+async function loadRoute(path, { token, secret, rest, graphql, trigger, publicRest, clock = Date } = {}) {
   const context = vm.createContext({
     process: { env: { GITHUB_TOKEN: token, GITHUB_WEBHOOK_SECRET: secret } },
-    console: { log() {}, warn() {}, error() {} }, Date, Map, Set,
+    console: { log() {}, warn() {}, error() {} }, Date: clock, Map, Set,
   });
   const config = new vm.SourceTextModule(await readFile(new URL("../lib/hacktober-repositories.js", import.meta.url), "utf8"), { context });
   await config.link(() => { throw new Error("Unexpected config import"); });
@@ -94,8 +94,8 @@ test("signed mathematics merge webhook updates the right track and ignores other
   const events = [];
   const secret = "test-secret";
   const { route } = await loadRoute("../app/api/webhook/github/route.js", { secret, trigger: async (...args) => events.push(args) });
-  async function request(owner, valid = true) {
-    const body = JSON.stringify({ action: "closed", repository: { owner: { login: owner }, name: "Hacktoberfest26-Theoretical-Mathematics-Challenges" }, pull_request: { merged: true, title: "Math solution", user: { login: "alice", avatar_url: "avatar" }, merged_at: "2026-10-03T12:00:00Z" } });
+  async function request(owner, valid = true, action = "closed", isMerged = true) {
+    const body = JSON.stringify({ action, repository: { owner: { login: owner }, name: "Hacktoberfest26-Theoretical-Mathematics-Challenges" }, pull_request: { merged: isMerged, title: "Math solution", user: { login: "alice", avatar_url: "avatar" }, merged_at: "2026-10-03T12:00:00Z" } });
     const signature = `sha256=${crypto.createHmac("sha256", secret).update(body).digest("hex")}`;
     return route.POST({ text: async () => body, headers: new Map([["x-hub-signature-256", valid ? signature : "invalid"], ["x-github-event", "pull_request"]]) });
   }
@@ -105,6 +105,9 @@ test("signed mathematics merge webhook updates the right track and ignores other
   await request("unrelated-owner");
   assert.equal(events.length, 2);
   assert.equal((await request("MU-Enigma", false)).status, 401);
+  await request("MU-Enigma", true, "opened", false);
+  await request("MU-Enigma", true, "closed", false);
+  assert.equal(events.length, 2, "Open and closed-unmerged PRs must not trigger updates");
 });
 
 
@@ -133,4 +136,31 @@ test("invalid deployment token can still read public repositories", async () => 
   assert.equal(body.partial, false);
   assert.equal(body.stats.totalPRs, 4);
   assert.equal(body.stats.totalUniqueContributors, 2);
+});
+
+
+test("merged PRs from deleted accounts still count in overall totals", async () => {
+  const { route } = await loadRoute("../app/api/hacktober-stats/route.js", {
+    rest: async ({ repo }) => ({ data: repo.includes("Systems-and-Security") ? [merged("alice", 1), { ...merged("deleted", 2), user: null }] : [] }),
+  });
+  const { body } = await route.GET();
+  assert.equal(body.stats.totalPRs, 2);
+  assert.equal(body.stats.totalUniqueContributors, 1);
+  assert.equal(body.committees.find((r) => r.name === "SysCom").mergedPRs, 2);
+});
+
+test("automatic polls fetch new merges after the shared cache expires", async () => {
+  let now = Date.now();
+  class Clock extends Date { static now() { return now; } }
+  let count = 1;
+  let calls = 0;
+  const { route } = await loadRoute("../app/api/hacktober-stats/route.js", {
+    clock: Clock,
+    rest: async ({ repo }) => { calls++; return { data: repo.includes("Systems-and-Security") ? Array.from({ length: count }, (_, i) => merged("alice", i + 1)) : [] }; },
+  });
+  assert.equal((await route.GET()).body.stats.totalPRs, 1);
+  count = 2;
+  now += 60000;
+  assert.equal((await route.GET()).body.stats.totalPRs, 2);
+  assert.equal(calls, 10);
 });

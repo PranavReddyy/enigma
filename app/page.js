@@ -24,6 +24,7 @@ export default function Home() {
   };
 
   return (
+    <>
     <AnimatePresence mode="wait">
       {currentStage === "booting" && null}
 
@@ -49,7 +50,8 @@ export default function Home() {
           <HomePage />
         </motion.div>
       )}
-      <CommandPanel />
     </AnimatePresence>
+      <CommandPanel />
+    </>
   );
 }
