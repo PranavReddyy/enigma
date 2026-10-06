@@ -9,8 +9,8 @@ import { useRouter } from 'next/navigation';
 // --- Configuration for the Event ---
 const eventDetails = {
   status: "Ongoing",
-  name: "Enigma Orientation 2025",
-  url: "/events"
+  name: "Hacktober Fest 2026",
+  url: "/hacktober"
 };
 
 export function BouncingEventBall() {

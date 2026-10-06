@@ -274,7 +274,7 @@ const CommitteeTable = ({ committees, loading }) => {
         <div className="bg-white/[0.03] border-t border-white/[0.08] px-6 py-4">
           <div className="flex items-center justify-between text-xs text-cyan-200/60">
             <span>Click column headers to sort</span>
-            <span>Updated in real-time</span>
+            <span>Refreshes automatically every minute</span>
           </div>
         </div>
       </motion.div>
@@ -389,7 +389,7 @@ const CommitteeTable = ({ committees, loading }) => {
         <div className="text-center text-xs text-cyan-200/60 pt-4">
           <div className="flex items-center justify-center gap-2">
             <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
-            <span>Updated in real-time</span>
+            <span>Refreshes automatically every minute</span>
           </div>
         </div>
       </div>
@@ -410,7 +410,7 @@ export default function HacktoberPage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch("/api/hacktober-stats");
+        const response = await fetch("/api/hacktober-stats", { cache: "no-store" });
         const data = await response.json();
         setStatsUnavailable(!response.ok || data.partial === true);
         setLeaderboardData(data.leaderboard || []);
@@ -690,6 +690,7 @@ git push origin feature/your-feature-name
                         <input
                           type="text"
                           placeholder="Search contributors..."
+                          aria-label="Search contributors"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           className="w-full pl-10 pr-10 py-3 bg-white/[0.02] border border-white/[0.08] rounded-xl text-cyan-100 placeholder-cyan-200/50 focus:outline-none focus:border-[#67DBE5]/50 focus:ring-1 focus:ring-[#67DBE5]/20 transition-all duration-300"
@@ -853,7 +854,7 @@ git push origin feature/your-feature-name
                           No recent activity
                         </h3>
                         <p className="text-cyan-200/60 text-sm">
-                          PR merges will appear here in real-time
+                          Merged PRs appear here after the next automatic refresh
                         </p>
                       </div>
                     )}
@@ -872,7 +873,7 @@ git push origin feature/your-feature-name
                 </h2>
               </div>
               <p className="text-lg text-cyan-200/70 max-w-2xl mx-auto">
-                Real-time rankings based on merged PRs and contributor activity
+                Rankings based on merged PRs, refreshed automatically every minute
               </p>
             </div>
 

@@ -107,7 +107,7 @@ export const HeroHeader = () => {
                            <ul className="flex gap-8 text-sm">
                                 {menuItems.map((item, index) => (
                                     <li key={index}>
-                                        <Link href={item.href} onClick={(e) => handleNavClick(e, item.href)} className="text-cyan-100/80 hover:text-cyan-200 transition-colors duration-200 font-medium focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-300" aria-current={pathname === item.href ? "page" : undefined}>{item.icon && <item.icon className="inline-block w-4 h-4 mr-2" aria-hidden="true" />}{item.name}</Link>
+                                        <Link href={item.href.startsWith("#") && pathname !== "/" ? "/" + item.href : item.href} onClick={(e) => handleNavClick(e, item.href)} className="text-cyan-100/80 hover:text-cyan-200 transition-colors duration-200 font-medium focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-300" aria-current={pathname === item.href ? "page" : undefined}>{item.icon && <item.icon className="inline-block w-4 h-4 mr-2" aria-hidden="true" />}{item.name}</Link>
                                     </li>
                                 ))}
                             </ul>
@@ -164,7 +164,7 @@ export const HeroHeader = () => {
     <li key={index} className="overflow-hidden">
         <motion.div variants={navLinkVariants} initial="initial" animate="open">
             <Link
-                href={item.href}
+                href={item.href.startsWith("#") && pathname !== "/" ? "/" + item.href : item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
                 className="text-4xl font-medium text-cyan-100/80 transition-colors hover:text-cyan-200"
             >

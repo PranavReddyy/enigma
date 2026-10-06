@@ -58,6 +58,21 @@ const sponsors = [
   },
 ];
 
+function SponsorLogo({ src, name }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) {
+    return <span className="text-xl font-semibold text-cyan-200/70">{name}</span>;
+  }
+  return (
+    <img
+      src={src}
+      alt={`${name} logo`}
+      onError={() => setFailed(true)}
+      className="h-12 w-auto opacity-60 hover:opacity-80 transition-opacity duration-300 grayscale hover:grayscale-0"
+    />
+  );
+}
+
 export function HeroSection() {
   const router = useRouter();
 
@@ -144,11 +159,7 @@ export function HeroSection() {
           >
             {sponsors.map(({ darkLogoUrl, name }) => (
               <div key={name} className="flex items-center gap-16 px-8">
-                <img
-                  src={darkLogoUrl}
-                  alt={`${name} logo`}
-                  className="h-12 w-auto opacity-60 hover:opacity-80 transition-opacity duration-300 grayscale hover:grayscale-0"
-                />
+                <SponsorLogo src={darkLogoUrl} name={name} />
               </div>
             ))}
           </Marquee>

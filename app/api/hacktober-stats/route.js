@@ -298,8 +298,8 @@ async function buildStats() {
       lastUpdated: new Date().toISOString(),
       stats: {
         totalUniqueContributors: allContributors.size,
-        totalPRs: leaderboardArray.reduce(
-          (sum, user) => sum + user.mergedPRs,
+        totalPRs: committeeStatsArray.reduce(
+          (sum, committee) => sum + committee.mergedPRs,
           0
         ),
       },
