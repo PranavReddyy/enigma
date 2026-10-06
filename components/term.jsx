@@ -34,7 +34,7 @@ const commands = {
   about: "Enigma is the official Computer Science club of Mahindra University. We are passionate about building the future through code, innovation, and collaboration.",
   projects: "Projects Initiative launched, check out the button to the left of me",
   contact: "You can find us on Instagram, LinkedIn, or send a carrier pigeon to the CS department.",
-  hacktober: "Join Hacktoberfest 2025! Fork our repos, make contributions, and earn exclusive swag. Visit /hacktober to get started!", 
+  hacktober: "Join Hacktober Fest 2026! Choose a repository from one of our five tracks, fork it, and contribute. Merged PRs count toward the leaderboard. Visit /hacktober to get started!", 
   neofetch: [
     "        ########  ##    ##    .   /",
     "        ##        ###   ##       /",
@@ -650,7 +650,7 @@ export function FakeTerminal() {
       const dynamicIdleMessages = [
         'Welcome to Enigma',
         2000,
-        'Hacktober 2025 is almost ending!',
+        'Hacktober Fest 2026 is live!',
         2000,
         'Projects Initiative is live!',
         2000,

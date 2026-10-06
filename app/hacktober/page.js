@@ -274,7 +274,7 @@ const CommitteeTable = ({ committees, loading }) => {
         <div className="bg-white/[0.03] border-t border-white/[0.08] px-6 py-4">
           <div className="flex items-center justify-between text-xs text-cyan-200/60">
             <span>Click column headers to sort</span>
-            <span>Updated in real-time</span>
+            <span>Refreshes automatically every minute</span>
           </div>
         </div>
       </motion.div>
@@ -389,7 +389,7 @@ const CommitteeTable = ({ committees, loading }) => {
         <div className="text-center text-xs text-cyan-200/60 pt-4">
           <div className="flex items-center justify-center gap-2">
             <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
-            <span>Updated in real-time</span>
+            <span>Refreshes automatically every minute</span>
           </div>
         </div>
       </div>
@@ -853,7 +853,7 @@ git push origin feature/your-feature-name
                           No recent activity
                         </h3>
                         <p className="text-cyan-200/60 text-sm">
-                          PR merges will appear here in real-time
+                          Merged PRs appear here after the next automatic refresh
                         </p>
                       </div>
                     )}
