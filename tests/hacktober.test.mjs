@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import vm from "node:vm";
 import crypto from "node:crypto";
 
-async function loadRoute(path, { token, secret, rest, graphql, trigger } = {}) {
+async function loadRoute(path, { token, secret, rest, graphql, trigger, publicRest } = {}) {
   const context = vm.createContext({
     process: { env: { GITHUB_TOKEN: token, GITHUB_WEBHOOK_SECRET: secret } },
     console: { log() {}, warn() {}, error() {} }, Date, Map, Set,
@@ -12,10 +12,10 @@ async function loadRoute(path, { token, secret, rest, graphql, trigger } = {}) {
   const config = new vm.SourceTextModule(await readFile(new URL("../lib/hacktober-repositories.js", import.meta.url), "utf8"), { context });
   await config.link(() => { throw new Error("Unexpected config import"); });
   await config.evaluate();
-  const json = (body, options) => ({ body, status: options?.status ?? 200 });
+  const json = (body, options) => ({ body, status: options?.status ?? 200, json: async () => body });
   const deps = {
     "next/server": { NextResponse: { json } },
-    "@octokit/rest": { Octokit: class { constructor() { this.rest = { pulls: { list: rest } }; this.graphql = graphql; } } },
+    "@octokit/rest": { Octokit: class { constructor(options) { this.rest = { pulls: { list: options?.auth ? rest : (publicRest ?? rest) } }; this.graphql = graphql; } } },
     "crypto": { default: crypto },
     "@/lib/pusher": { pusher: { trigger } },
   };
@@ -105,4 +105,32 @@ test("signed mathematics merge webhook updates the right track and ignores other
   await request("unrelated-owner");
   assert.equal(events.length, 2);
   assert.equal((await request("MU-Enigma", false)).status, 401);
+});
+
+
+test("GraphQL failure falls back to REST and concurrent polls share one refresh", async () => {
+  let calls = 0;
+  const { route } = await loadRoute("../app/api/hacktober-stats/route.js", {
+    token: "test-token",
+    graphql: async () => { throw new Error("GraphQL access denied"); },
+    rest: async () => { calls++; return { data: [merged("real-contributor", 1), { merged_at: null }] }; },
+  });
+  const results = await Promise.all([route.GET(), route.GET(), route.GET()]);
+  assert.equal(calls, 5);
+  assert.ok(results.every(({ body }) => !body.partial && body.stats.totalPRs === 5));
+  await route.GET();
+  assert.equal(calls, 5);
+});
+
+test("invalid deployment token can still read public repositories", async () => {
+  const { route } = await loadRoute("../app/api/hacktober-stats/route.js", {
+    token: "expired-token",
+    graphql: async () => { throw Object.assign(new Error("Bad credentials"), { status: 401 }); },
+    rest: async () => { throw Object.assign(new Error("Bad credentials"), { status: 401 }); },
+    publicRest: async ({ repo }) => ({ data: repo.includes("Systems-and-Security") ? [merged("sapph-h", 1), merged("sapph-h", 2), merged("sapph-h", 4), merged("architmishra-15", 3)] : [] }),
+  });
+  const { body } = await route.GET();
+  assert.equal(body.partial, false);
+  assert.equal(body.stats.totalPRs, 4);
+  assert.equal(body.stats.totalUniqueContributors, 2);
 });
