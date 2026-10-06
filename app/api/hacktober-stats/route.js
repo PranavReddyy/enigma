@@ -6,6 +6,12 @@ const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
 
+const publicOctokit = new Octokit();
+export const dynamic = "force-dynamic";
+const RESPONSE_HEADERS = { "Cache-Control": "no-store" };
+let cachedResult;
+let pendingRefresh;
+
 function getTimeAgo(date) {
   const now = new Date();
   const diffInSeconds = Math.floor((now - date) / 1000);
@@ -20,7 +26,7 @@ const ORG_NAME = HACKTOBER_ORG;
 
 const REPOS = Object.keys(REPO_COMMITTEE_MAP);
 
-async function fetchAllMergedPRs(owner, repo) {
+async function fetchAllMergedPRs(owner, repo, client = octokit) {
   let allMergedPRs = [];
   let page = 1;
   let hasMore = true;
@@ -29,7 +35,7 @@ async function fetchAllMergedPRs(owner, repo) {
 
   while (hasMore) {
     try {
-      const { data: prs } = await octokit.rest.pulls.list({
+      const { data: prs } = await client.rest.pulls.list({
         owner,
         repo,
         state: "closed",
@@ -133,7 +139,43 @@ async function fetchAllMergedPRsGraphQL(owner, repo) {
   return allPRs;
 }
 
+async function fetchMergedPRs(owner, repo) {
+  if (process.env.GITHUB_TOKEN) {
+    try {
+      return await fetchAllMergedPRsGraphQL(owner, repo);
+    } catch (error) {
+      console.warn(`GraphQL unavailable for ${owner}/${repo}; trying REST`, error.message);
+    }
+  }
+  let prs;
+  try {
+    prs = await fetchAllMergedPRs(owner, repo);
+  } catch (error) {
+    if (!process.env.GITHUB_TOKEN || ![401, 403, 404].includes(error.status)) throw error;
+    prs = await fetchAllMergedPRs(owner, repo, publicOctokit);
+  }
+  return prs.map((pr) => ({
+    number: pr.number,
+    title: pr.title,
+    author: pr.user ? { login: pr.user.login, avatarUrl: pr.user.avatar_url } : null,
+    mergedAt: pr.merged_at,
+  }));
+}
+
 export async function GET() {
+  if (cachedResult && Date.now() - cachedResult.createdAt < 45000) return NextResponse.json(cachedResult.body, { status: cachedResult.status, headers: RESPONSE_HEADERS });
+  if (!pendingRefresh) {
+    pendingRefresh = buildStats().then(async (response) => {
+      const body = await response.json();
+      cachedResult = { body, status: response.status, createdAt: Date.now() };
+      return cachedResult;
+    }).finally(() => { pendingRefresh = undefined; });
+  }
+  const result = await pendingRefresh;
+  return NextResponse.json(result.body, { status: result.status, headers: RESPONSE_HEADERS });
+}
+
+async function buildStats() {
   try {
     const leaderboard = new Map();
     const committeeStats = new Map();
@@ -154,14 +196,7 @@ export async function GET() {
     for (const repoName of REPOS) {
       try {
         // Use GraphQL method for better pagination
-        const mergedPRs = process.env.GITHUB_TOKEN
-          ? await fetchAllMergedPRsGraphQL(ORG_NAME, repoName)
-          : (await fetchAllMergedPRs(ORG_NAME, repoName)).map((pr) => ({
-              number: pr.number,
-              title: pr.title,
-              author: pr.user ? { login: pr.user.login, avatarUrl: pr.user.avatar_url } : null,
-              mergedAt: pr.merged_at,
-            }));
+        const mergedPRs = await fetchMergedPRs(ORG_NAME, repoName);
 
         const committeeName = REPO_COMMITTEE_MAP[repoName];
         const stats = committeeStats.get(committeeName);
@@ -268,12 +303,12 @@ export async function GET() {
           0
         ),
       },
-    });
+    }, { headers: RESPONSE_HEADERS });
   } catch (error) {
     console.error("Error fetching GitHub stats:", error);
     return NextResponse.json(
       { error: "Failed to fetch stats", details: error.message },
-      { status: 500 }
+      { status: 500, headers: RESPONSE_HEADERS }
     );
   }
 }
