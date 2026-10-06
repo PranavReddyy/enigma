@@ -27,6 +27,6 @@
 - Production GitHub fetch error cannot be diagnosed conclusively without server logs. Configure a valid server-only GITHUB_TOKEN with repository read access for reliable quota; anonymous fallback has lower rate limits.
 - Pusher webhook delivery needs production keys and repository webhook configuration. Polling does not depend on Pusher.
 - Shared cache is per server instance and expires after 45 seconds. The browser polls every minute; counts can lag a merge by a polling/cache window and GitHub visibility delay.
-- PR #11 requires merging; Vercel currently requires team authorization for its preview deployment.
+- PR #11 merged during the audit. Follow-up PR #12 contains the remaining audit fixes and awaits merging; its Vercel preview requires team authorization.
 
 No assertion that the entire website is bug-free is made. Verified behavior and unverified integrations are separated above.
