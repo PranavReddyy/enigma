@@ -152,7 +152,7 @@ test("merged PRs from deleted accounts still count in overall totals", async () 
 
 test("automatic polls fetch new merges after the shared cache expires", async () => {
   let now = Date.now();
-  class Clock extends Date { static now() { return now; } }
+  class Clock extends Date { constructor(...args) { super(...(args.length ? args : [now])); } static now() { return now; } }
   let count = 1;
   let calls = 0;
   const { route } = await loadRoute("../app/api/hacktober-stats/route.js", {
@@ -161,7 +161,10 @@ test("automatic polls fetch new merges after the shared cache expires", async ()
   });
   assert.equal((await route.GET()).body.stats.totalPRs, 1);
   count = 2;
-  now += 60000;
+  now += 9999;
+  assert.equal((await route.GET()).body.stats.totalPRs, 1);
+  assert.equal(calls, 5);
+  now += 2;
   assert.equal((await route.GET()).body.stats.totalPRs, 2);
   assert.equal(calls, 10);
 });
@@ -169,7 +172,7 @@ test("automatic polls fetch new merges after the shared cache expires", async ()
 
 test("a failed refresh preserves the last successful leaderboard", async () => {
   let now = Date.now();
-  class Clock extends Date { static now() { return now; } }
+  class Clock extends Date { constructor(...args) { super(...(args.length ? args : [now])); } static now() { return now; } }
   let failing = false;
   const { route } = await loadRoute("../app/api/hacktober-stats/route.js", {
     clock: Clock,

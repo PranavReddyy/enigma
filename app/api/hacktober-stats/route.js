@@ -175,15 +175,15 @@ const readSnapshot = unstable_cache(async () => {
     throw error;
   }
   return body;
-}, ["hacktober-2026-stats-v2", HACKTOBER_ORG, ...REPOS], { revalidate: 60 });
+}, ["hacktober-2026-stats-v3", HACKTOBER_ORG, ...REPOS], { revalidate: 10 });
 
 function respond(result) {
-  const stale = result.body.stale === true || (!!result.body.lastUpdated && Date.now() - new Date(result.body.lastUpdated).getTime() > 120000);
+  const stale = result.body.stale === true || (!!result.body.lastUpdated && Date.now() - new Date(result.body.lastUpdated).getTime() > 45000);
   return NextResponse.json({ ...result.body, stale }, { status: result.status, headers: RESPONSE_HEADERS });
 }
 
 export async function GET() {
-  if (cachedResult && Date.now() - cachedResult.createdAt < 45000) return respond(cachedResult);
+  if (cachedResult && Date.now() - new Date(cachedResult.body.lastUpdated).getTime() < 10000) return respond(cachedResult);
   if (!pendingRefresh) {
     pendingRefresh = readSnapshot().then((body) => {
       cachedResult = { body, status: 200, createdAt: Date.now() };

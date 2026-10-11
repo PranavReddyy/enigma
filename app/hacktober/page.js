@@ -274,7 +274,7 @@ const CommitteeTable = ({ committees, loading }) => {
         <div className="bg-white/[0.03] border-t border-white/[0.08] px-6 py-4">
           <div className="flex items-center justify-between text-xs text-cyan-200/60">
             <span>Click column headers to sort</span>
-            <span>Refreshes automatically every minute</span>
+            <span>Checks every 10 seconds · merged PRs normally appear within 30 seconds</span>
           </div>
         </div>
       </motion.div>
@@ -389,7 +389,7 @@ const CommitteeTable = ({ committees, loading }) => {
         <div className="text-center text-xs text-cyan-200/60 pt-4">
           <div className="flex items-center justify-center gap-2">
             <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
-            <span>Refreshes automatically every minute</span>
+            <span>Checks every 10 seconds · merged PRs normally appear within 30 seconds</span>
           </div>
         </div>
       </div>
@@ -430,7 +430,7 @@ export default function HacktoberPage() {
 
     fetchStats();
 
-    const refreshTimer = setInterval(fetchStats, 60000);
+    const refreshTimer = setInterval(fetchStats, 10000);
     if (!pusherClient) return () => clearInterval(refreshTimer);
 
     const channel = pusherClient.subscribe("hacktober-stats");
@@ -660,7 +660,7 @@ git push origin feature/your-feature-name
                 )}
               </div>
               <p className="text-lg text-cyan-200/70 max-w-2xl mx-auto mb-8">
-                Merged pull requests and contributors across all five repositories
+                Merged PRs across all five repositories · Checks every 10 seconds · Normally updates within 30 seconds
               </p>
             </div>
 
@@ -681,7 +681,7 @@ git push origin feature/your-feature-name
                     <div className="flex items-center gap-2">
                       <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-400 animate-pulse" : "bg-cyan-300/60"}`}></div>
                       <span className="text-xs text-cyan-200/60">
-                        {isConnected ? "Live updates" : "Refreshes every minute"}
+                        {isConnected ? "Live updates" : "Checks every 10 seconds"}
                       </span>
                     </div>
                   </div>
@@ -879,7 +879,7 @@ git push origin feature/your-feature-name
                 </h2>
               </div>
               <p className="text-lg text-cyan-200/70 max-w-2xl mx-auto">
-                Rankings based on merged PRs, refreshed automatically every minute
+                Rankings based on merged PRs · Checks every 10 seconds · Normally updates within 30 seconds
               </p>
             </div>
 
