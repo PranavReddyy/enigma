@@ -274,7 +274,7 @@ const CommitteeTable = ({ committees, loading }) => {
         <div className="bg-white/[0.03] border-t border-white/[0.08] px-6 py-4">
           <div className="flex items-center justify-between text-xs text-cyan-200/60">
             <span>Click column headers to sort</span>
-            <span>Refreshes automatically every minute</span>
+            <span>Checks every 10 seconds · merged PRs normally appear within 30 seconds</span>
           </div>
         </div>
       </motion.div>
@@ -389,7 +389,7 @@ const CommitteeTable = ({ committees, loading }) => {
         <div className="text-center text-xs text-cyan-200/60 pt-4">
           <div className="flex items-center justify-center gap-2">
             <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
-            <span>Refreshes automatically every minute</span>
+            <span>Checks every 10 seconds · merged PRs normally appear within 30 seconds</span>
           </div>
         </div>
       </div>
@@ -403,6 +403,7 @@ export default function HacktoberPage() {
   const [recentActivity, setRecentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statsUnavailable, setStatsUnavailable] = useState(false);
+  const [statsStale, setStatsStale] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredLeaderboard, setFilteredLeaderboard] = useState([]);
@@ -412,13 +413,16 @@ export default function HacktoberPage() {
       try {
         const response = await fetch("/api/hacktober-stats", { cache: "no-store" });
         const data = await response.json();
-        setStatsUnavailable(!response.ok || data.partial === true);
+        if (!response.ok) throw new Error("Stats request failed");
+        setStatsUnavailable(data.partial === true);
+        setStatsStale(data.stale === true);
         setLeaderboardData(data.leaderboard || []);
         setCommitteeStats(data.committees || []);
         setRecentActivity(data.recentActivity || []);
       } catch (error) {
         console.error("Error fetching stats:", error);
         setStatsUnavailable(true);
+        setStatsStale(true);
       } finally {
         setLoading(false);
       }
@@ -426,7 +430,7 @@ export default function HacktoberPage() {
 
     fetchStats();
 
-    const refreshTimer = setInterval(fetchStats, 60000);
+    const refreshTimer = setInterval(fetchStats, 10000);
     if (!pusherClient) return () => clearInterval(refreshTimer);
 
     const channel = pusherClient.subscribe("hacktober-stats");
@@ -656,13 +660,15 @@ git push origin feature/your-feature-name
                 )}
               </div>
               <p className="text-lg text-cyan-200/70 max-w-2xl mx-auto mb-8">
-                Merged pull requests and contributors across all five repositories
+                Merged PRs across all five repositories · Checks every 10 seconds · Normally updates within 30 seconds
               </p>
             </div>
 
-            {statsUnavailable && (
+            {(statsUnavailable || statsStale) && (
               <p role="status" className="mb-6 rounded-xl border border-cyan-300/20 bg-cyan-300/5 px-5 py-4 text-sm text-cyan-100/80">
-                Some repository data is unavailable. Rankings may be incomplete; unavailable counts are not confirmed zeros.
+                {statsStale && leaderboardData.length > 0
+                  ? "Showing the last successful update. GitHub refresh is delayed; retrying automatically."
+                  : "Some repository data is unavailable. Rankings may be incomplete; unavailable counts are not confirmed zeros."}
               </p>
             )}
             <div className="max-w-6xl mx-auto">
@@ -675,7 +681,7 @@ git push origin feature/your-feature-name
                     <div className="flex items-center gap-2">
                       <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-400 animate-pulse" : "bg-cyan-300/60"}`}></div>
                       <span className="text-xs text-cyan-200/60">
-                        {isConnected ? "Live updates" : "Refreshes every minute"}
+                        {isConnected ? "Live updates" : "Checks every 10 seconds"}
                       </span>
                     </div>
                   </div>
@@ -873,13 +879,15 @@ git push origin feature/your-feature-name
                 </h2>
               </div>
               <p className="text-lg text-cyan-200/70 max-w-2xl mx-auto">
-                Rankings based on merged PRs, refreshed automatically every minute
+                Rankings based on merged PRs · Checks every 10 seconds · Normally updates within 30 seconds
               </p>
             </div>
 
-            {statsUnavailable && (
+            {(statsUnavailable || statsStale) && (
               <p role="status" className="mb-6 rounded-xl border border-cyan-300/20 bg-cyan-300/5 px-5 py-4 text-sm text-cyan-100/80">
-                Some repository data is unavailable. Rankings may be incomplete; unavailable counts are not confirmed zeros.
+                {statsStale && leaderboardData.length > 0
+                  ? "Showing the last successful update. GitHub refresh is delayed; retrying automatically."
+                  : "Some repository data is unavailable. Rankings may be incomplete; unavailable counts are not confirmed zeros."}
               </p>
             )}
             <div className="max-w-6xl mx-auto">

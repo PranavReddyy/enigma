@@ -15,6 +15,7 @@ async function loadRoute(path, { token, secret, rest, graphql, trigger, publicRe
   const json = (body, options) => ({ body, status: options?.status ?? 200, json: async () => body });
   const deps = {
     "next/server": { NextResponse: { json } },
+    "next/cache": { unstable_cache: (fn) => fn },
     "@octokit/rest": { Octokit: class { constructor(options) { this.rest = { pulls: { list: options?.auth ? rest : (publicRest ?? rest) } }; this.graphql = graphql; } } },
     "crypto": { default: crypto },
     "@/lib/pusher": { pusher: { trigger } },
@@ -151,7 +152,7 @@ test("merged PRs from deleted accounts still count in overall totals", async () 
 
 test("automatic polls fetch new merges after the shared cache expires", async () => {
   let now = Date.now();
-  class Clock extends Date { static now() { return now; } }
+  class Clock extends Date { constructor(...args) { super(...(args.length ? args : [now])); } static now() { return now; } }
   let count = 1;
   let calls = 0;
   const { route } = await loadRoute("../app/api/hacktober-stats/route.js", {
@@ -160,7 +161,31 @@ test("automatic polls fetch new merges after the shared cache expires", async ()
   });
   assert.equal((await route.GET()).body.stats.totalPRs, 1);
   count = 2;
-  now += 60000;
+  now += 9999;
+  assert.equal((await route.GET()).body.stats.totalPRs, 1);
+  assert.equal(calls, 5);
+  now += 2;
   assert.equal((await route.GET()).body.stats.totalPRs, 2);
   assert.equal(calls, 10);
+});
+
+
+test("a failed refresh preserves the last successful leaderboard", async () => {
+  let now = Date.now();
+  class Clock extends Date { constructor(...args) { super(...(args.length ? args : [now])); } static now() { return now; } }
+  let failing = false;
+  const { route } = await loadRoute("../app/api/hacktober-stats/route.js", {
+    clock: Clock,
+    rest: async ({ repo }) => {
+      if (failing) throw Object.assign(new Error("GitHub rate limit"), { status: 403 });
+      return { data: repo.includes("Systems-and-Security") ? [merged("alice", 1)] : [] };
+    },
+  });
+  assert.equal((await route.GET()).body.stats.totalPRs, 1);
+  failing = true;
+  now += 60000;
+  const { body } = await route.GET();
+  assert.equal(body.stats.totalPRs, 1);
+  assert.equal(body.stale, true);
+  assert.equal(body.leaderboard[0].username, "alice");
 });
