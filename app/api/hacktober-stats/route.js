@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
+import { unstable_cache } from "next/cache";
 import { Octokit } from "@octokit/rest";
 import { REPO_COMMITTEE_MAP, HACKTOBER_ORG } from "@/lib/hacktober-repositories";
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
+  request: { timeout: 8000 },
 });
 
-const publicOctokit = new Octokit();
+const publicOctokit = new Octokit({ request: { timeout: 8000 } });
 export const dynamic = "force-dynamic";
 const RESPONSE_HEADERS = { "Cache-Control": "no-store" };
 let cachedResult;
@@ -162,17 +164,37 @@ async function fetchMergedPRs(owner, repo) {
   }));
 }
 
+// Only complete, successful snapshots enter the persistent Next.js Data Cache.
+// Failed revalidation leaves the previous snapshot available across instances.
+const readSnapshot = unstable_cache(async () => {
+  const response = await buildStats();
+  const body = await response.json();
+  if (response.status !== 200 || body.partial) {
+    const error = new Error("GitHub snapshot refresh incomplete");
+    error.snapshot = body;
+    throw error;
+  }
+  return body;
+}, ["hacktober-2026-stats-v2", HACKTOBER_ORG, ...REPOS], { revalidate: 60 });
+
+function respond(result) {
+  const stale = result.body.stale === true || (!!result.body.lastUpdated && Date.now() - new Date(result.body.lastUpdated).getTime() > 120000);
+  return NextResponse.json({ ...result.body, stale }, { status: result.status, headers: RESPONSE_HEADERS });
+}
+
 export async function GET() {
-  if (cachedResult && Date.now() - cachedResult.createdAt < 45000) return NextResponse.json(cachedResult.body, { status: cachedResult.status, headers: RESPONSE_HEADERS });
+  if (cachedResult && Date.now() - cachedResult.createdAt < 45000) return respond(cachedResult);
   if (!pendingRefresh) {
-    pendingRefresh = buildStats().then(async (response) => {
-      const body = await response.json();
-      cachedResult = { body, status: response.status, createdAt: Date.now() };
+    pendingRefresh = readSnapshot().then((body) => {
+      cachedResult = { body, status: 200, createdAt: Date.now() };
       return cachedResult;
+    }).catch((error) => {
+      console.error("GitHub snapshot refresh failed:", error.message);
+      if (cachedResult) return { ...cachedResult, body: { ...cachedResult.body, stale: true } };
+      return { body: error.snapshot || { error: "Contribution data temporarily unavailable", partial: true }, status: error.snapshot ? 200 : 503 };
     }).finally(() => { pendingRefresh = undefined; });
   }
-  const result = await pendingRefresh;
-  return NextResponse.json(result.body, { status: result.status, headers: RESPONSE_HEADERS });
+  return respond(await pendingRefresh);
 }
 
 async function buildStats() {
@@ -193,7 +215,7 @@ async function buildStats() {
     });
 
     // Fetch data for each repository using GraphQL
-    for (const repoName of REPOS) {
+    await Promise.all(REPOS.map(async (repoName) => {
       try {
         // Use GraphQL method for better pagination
         const mergedPRs = await fetchMergedPRs(ORG_NAME, repoName);
@@ -249,7 +271,7 @@ async function buildStats() {
           error.message
         );
       }
-    }
+    }));
 
     // Sort and limit recent activity to 10 most recent
     const sortedRecentActivity = recentActivity
@@ -258,7 +280,7 @@ async function buildStats() {
 
     // Convert leaderboard to array and sort
     const leaderboardArray = Array.from(leaderboard.values()).sort(
-      (a, b) => b.mergedPRs - a.mergedPRs
+      (a, b) => b.mergedPRs - a.mergedPRs || a.username.localeCompare(b.username)
     );
 
     // Convert committee stats to array and convert Set to number

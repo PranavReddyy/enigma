@@ -403,6 +403,7 @@ export default function HacktoberPage() {
   const [recentActivity, setRecentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statsUnavailable, setStatsUnavailable] = useState(false);
+  const [statsStale, setStatsStale] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredLeaderboard, setFilteredLeaderboard] = useState([]);
@@ -412,13 +413,16 @@ export default function HacktoberPage() {
       try {
         const response = await fetch("/api/hacktober-stats", { cache: "no-store" });
         const data = await response.json();
-        setStatsUnavailable(!response.ok || data.partial === true);
+        if (!response.ok) throw new Error("Stats request failed");
+        setStatsUnavailable(data.partial === true);
+        setStatsStale(data.stale === true);
         setLeaderboardData(data.leaderboard || []);
         setCommitteeStats(data.committees || []);
         setRecentActivity(data.recentActivity || []);
       } catch (error) {
         console.error("Error fetching stats:", error);
         setStatsUnavailable(true);
+        setStatsStale(true);
       } finally {
         setLoading(false);
       }
@@ -660,9 +664,11 @@ git push origin feature/your-feature-name
               </p>
             </div>
 
-            {statsUnavailable && (
+            {(statsUnavailable || statsStale) && (
               <p role="status" className="mb-6 rounded-xl border border-cyan-300/20 bg-cyan-300/5 px-5 py-4 text-sm text-cyan-100/80">
-                Some repository data is unavailable. Rankings may be incomplete; unavailable counts are not confirmed zeros.
+                {statsStale && leaderboardData.length > 0
+                  ? "Showing the last successful update. GitHub refresh is delayed; retrying automatically."
+                  : "Some repository data is unavailable. Rankings may be incomplete; unavailable counts are not confirmed zeros."}
               </p>
             )}
             <div className="max-w-6xl mx-auto">
@@ -877,9 +883,11 @@ git push origin feature/your-feature-name
               </p>
             </div>
 
-            {statsUnavailable && (
+            {(statsUnavailable || statsStale) && (
               <p role="status" className="mb-6 rounded-xl border border-cyan-300/20 bg-cyan-300/5 px-5 py-4 text-sm text-cyan-100/80">
-                Some repository data is unavailable. Rankings may be incomplete; unavailable counts are not confirmed zeros.
+                {statsStale && leaderboardData.length > 0
+                  ? "Showing the last successful update. GitHub refresh is delayed; retrying automatically."
+                  : "Some repository data is unavailable. Rankings may be incomplete; unavailable counts are not confirmed zeros."}
               </p>
             )}
             <div className="max-w-6xl mx-auto">
