@@ -39,6 +39,7 @@
     "ws": "^8.18.3"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.10",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "eslint": "^9",

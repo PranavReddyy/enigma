@@ -15,6 +15,7 @@ const menuItems = [
     // { name: 'Meet the Team', href: '#team' },
     { name: 'Events', href: '/events' },
     { name: 'Hacktober', href: '/hacktober', icon: GitPullRequest },
+    { name: 'Hack Day', href: '/hack-day' },
     { name: 'FAQ', href: '#faq' },
 ]
 
