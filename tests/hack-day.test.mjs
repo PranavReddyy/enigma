@@ -6,23 +6,23 @@ import crypto from "node:crypto";
 
 const projects = JSON.parse(await readFile(new URL("../lib/hack-day-projects.json", import.meta.url), "utf8"));
 
-async function setup({ configured = true, user = { email: "voter@example.com", email_confirmed_at: "2026-10-21" }, insertError = null, enabled = true, vote = null, queryError = null } = {}) {
+async function setup({ configured = true, user = { email: "voter@example.com", email_confirmed_at: "2026-10-21" }, insertError = null, enabled = true, vote = null, queryError = null, clientError = false, ballot = [{ project_id: projects[0].id }], opensAt = "2026-10-01T00:00:00Z", closesAt = null, now = Date.now() } = {}) {
   const writes = [];
   const db = {
     auth: { getUser: async (token) => ({ data: { user: token === "valid" ? user : null }, error: null }) },
     from(table) {
       return {
         select() { return this; }, eq() { return this; },
-        async maybeSingle() { return { data: table === "HackDayEvent" ? { enabled, opens_at: "2026-10-01T00:00:00Z", closes_at: null } : vote ? { project_id: vote } : null, error: queryError }; },
-        then(resolve) { return Promise.resolve({ data: [{ project_id: projects[0].id }], error: queryError }).then(resolve); },
+        async maybeSingle() { return { data: table === "HackDayEvent" ? { enabled, opens_at: opensAt, closes_at: closesAt } : vote ? { project_id: vote } : null, error: queryError }; },
+        then(resolve) { return Promise.resolve({ data: ballot, error: queryError }).then(resolve); },
         async insert(value) { writes.push(value); return { error: insertError }; },
       };
     },
   };
-  const context = vm.createContext({ process: { env: configured ? { NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co", SUPABASE_SERVICE_ROLE_KEY: "server-only" } : {} }, Date, Set, URL });
+  const context = vm.createContext({ process: { env: configured ? { NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co", SUPABASE_SERVICE_ROLE_KEY: "server-only" } : {} }, Date: class extends Date { static now() { return now; } }, Set, URL });
   const dependencies = {
     "next/server": { NextResponse: { json: (body, options) => ({ body, ...options }) } },
-    "@supabase/supabase-js": { createClient: () => db },
+    "@supabase/supabase-js": { createClient: () => { if (clientError) throw new Error("Invalid supabaseUrl"); return db; } },
     "node:crypto": { createHash: crypto.createHash },
     "@/lib/hack-day-projects.json": { default: projects },
   };
@@ -112,5 +112,29 @@ test("duplicate votes, closed ballot and storage failures have explicit response
   for (const [code, status] of [["23505", 409], ["23514", 403], ["08006", 503]]) {
     const { route } = await setup({ insertError: { code } });
     assert.equal((await route.POST(request())).status, status);
+  }
+});
+
+test("malformed database configuration fails closed without an unhandled route error", async () => {
+  const { route } = await setup({ clientError: true });
+  assert.equal((await route.GET(request())).body.open, false);
+  assert.equal((await route.POST(request())).status, 503);
+});
+
+test("an enabled event with no approved known projects is not open", async () => {
+  for (const ballot of [[], [{ project_id: "unknown-project" }]]) {
+    const { route } = await setup({ ballot });
+    const { body } = await route.GET(request());
+    assert.equal(body.open, false);
+    assert.equal(body.projects.length, 0);
+  }
+});
+
+test("ballot opens at its opening instant and closes at its closing instant", async () => {
+  const opensAt = "2026-10-22T00:00:00+05:30";
+  const closesAt = "2026-10-23T00:00:00+05:30";
+  for (const [now, open] of [[Date.parse(opensAt) - 1, false], [Date.parse(opensAt), true], [Date.parse(closesAt) - 1, true], [Date.parse(closesAt), false]]) {
+    const { route } = await setup({ opensAt, closesAt, now });
+    assert.equal((await route.GET(request())).body.open, open);
   }
 });

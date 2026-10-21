@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-vm-modules --test tests/*.test.mjs"
+    "test": "node --experimental-vm-modules --test tests/*.test.mjs",
+    "test:hack-day:fixture": "node tests/hack-day-local-supabase.mjs",
+    "test:hack-day:http": "node tests/hack-day-http-check.mjs"
   },
   "dependencies": {
     "@octokit/rest": "^21.1.1",
@@ -25,7 +27,7 @@
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.544.0",
     "motion": "^12.23.16",
-    "next": "15.5.9",
+    "next": "15.5.28",
     "pusher": "^5.2.0",
     "pusher-js": "^8.4.0",
     "react": "19.1.0",
@@ -43,7 +45,7 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "eslint": "^9",
-    "eslint-config-next": "15.5.3",
+    "eslint-config-next": "15.5.28",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.8"
   }

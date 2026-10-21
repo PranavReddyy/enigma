@@ -4,7 +4,7 @@
 .desktop a, .desktop button { touch-action: manipulation; }
 .desktop button { cursor: pointer; }
 .desktop button:disabled { cursor: not-allowed; color: #626262; background: #d7d7d7; }
-.desktop a:focus-visible, .desktop button:focus-visible, .desktop input:focus-visible, .confirm:focus { outline: 3px solid #00817d; outline-offset: 3px; }
+.desktop a:focus-visible, .desktop button:focus-visible, .desktop input:focus-visible, .confirm:focus, .account h2:focus { outline: 3px solid #00817d; outline-offset: 3px; }
 .desktop svg { flex-shrink: 0; }
 .wallpaper { position: fixed; inset: 0; z-index: -1; display: flex; flex-direction: column; justify-content: space-around; overflow: hidden; color: #343434; font: 9px "Courier New", monospace; letter-spacing: 4px; pointer-events: none; }
 .wallpaper span { white-space: nowrap; }

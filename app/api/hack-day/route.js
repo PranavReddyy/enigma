@@ -10,9 +10,11 @@ const json = (body, status = 200) => NextResponse.json(body, { status, headers }
 
 function database() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
-  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
+  try {
+    return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+  } catch { return null; }
 }
 
 async function voter(db, request) {
@@ -42,9 +44,10 @@ export async function GET(request) {
       if (voteError) return unavailable();
       vote = data?.project_id ?? null;
     }
+    const publishedProjects = projects.filter((project) => ids.has(project.id));
     const now = Date.now();
-    const open = event.enabled && now >= Date.parse(event.opens_at) && (!event.closes_at || now < Date.parse(event.closes_at));
-    return json({ projects: projects.filter((project) => ids.has(project.id)), ready: true, open,
+    const open = publishedProjects.length > 0 && event.enabled && now >= Date.parse(event.opens_at) && (!event.closes_at || now < Date.parse(event.closes_at));
+    return json({ projects: publishedProjects, ready: true, open,
       opensAt: event.opens_at, closesAt: event.closes_at, vote });
   } catch {
     return unavailable();

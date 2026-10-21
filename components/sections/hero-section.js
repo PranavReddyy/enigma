@@ -109,13 +109,20 @@ export function HeroSection() {
                 Building the future through code, innovation, and collaboration.
               </p>
 
-              <div className="flex flex-row gap-3 justify-center lg:justify-start">
+              <div className="flex flex-row flex-wrap gap-3 justify-center lg:justify-start">
                 <MetalButton
                   variant="primary"
                   onClick={() => router.push("/hacktober")}
                   size="lg"
                 >
                   Hacktober Page
+                </MetalButton>
+                <MetalButton
+                  variant="purple"
+                  onClick={() => router.push("/hack-day")}
+                  size="lg"
+                >
+                  Hack Day Voting
                 </MetalButton>
                 <MetalButton
                   onClick={() =>
