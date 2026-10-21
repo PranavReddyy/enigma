@@ -112,7 +112,7 @@ export default function HackDayPage() {
             <div className={styles.address}><span>Address</span><code>C:\ENIGMA\HACK_DAY\VOTE</code></div>
             <div className={styles.body}>
               <section className={styles.hero}>
-                <div><p className={styles.eyebrow}>BUILT BY THE COMMUNITY. CHOSEN BY YOU.</p><h1>GOOD CODE.<br />GREAT IDEAS.<br /><span>YOUR CALL.</span></h1><p>Explore what Enigma built. Open the repositories, meet the projects, and give your favourite one your vote.</p><a href="#projects" className={styles.primary}>Explore the projects <ArrowUpRight size={16} /></a></div>
+                <div><p className={styles.eyebrow}>BUILT BY STUDENTS. CHOSEN BY YOU.</p><h1>GOOD CODE.<br />GREAT IDEAS.<br /><span>YOUR CALL.</span></h1><p>Explore what students built. Open the repositories, meet the projects, and give your favourite one your vote.</p><a href="#projects" className={styles.primary}>Explore the projects <ArrowUpRight size={16} /></a></div>
                 <div className={styles.ballotArt} aria-hidden="true"><div className={styles.paper}><span>ENIGMA</span><i /><i /><i /><b>✓</b></div><div className={styles.box}>YOUR VOICE<br /><strong>COUNTS.</strong></div></div>
               </section>
 
@@ -146,7 +146,7 @@ export default function HackDayPage() {
         </div>
         <footer className={styles.statusbar}><span>{loading ? "Loading ballot" : ballot.vote ? "Vote saved" : ballot.open ? "Voting open" : "Browse mode"}</span><span>{ballot.projects.length} projects</span><span>Vote counts private</span></footer>
       </section>
-      <footer className={styles.desktopFooter}><Link href="/">ENIGMA</Link><p>Mahindra University · Built together. Chosen together.</p><a href="https://github.com/MU-Enigma/Hacktoberfest26-WebDev-Challenges" target="_blank" rel="noopener noreferrer">UI inspired by SIGNAL ↗</a></footer>
+      <footer className={styles.desktopFooter}><Link href="/">ENIGMA</Link><p>Mahindra University · Built by students. Chosen by you.</p><a href="https://github.com/MU-Enigma/Hacktoberfest26-WebDev-Challenges" target="_blank" rel="noopener noreferrer">UI inspired by SIGNAL ↗</a></footer>
     </main>
   );
 }
