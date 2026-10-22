@@ -9,14 +9,19 @@ test("PostgreSQL enforces private, approved, time-bound, one-email ballots", asy
     await db.exec("create role anon; create role authenticated; create role service_role bypassrls;");
     await db.exec(await readFile(new URL("../db/hack-day-voting.sql", import.meta.url), "utf8"));
     await db.exec(await readFile(new URL("../db/hack-day-projects-review.sql", import.meta.url), "utf8"));
+    const catalog = JSON.parse(await readFile(new URL("../lib/hack-day-projects.json", import.meta.url), "utf8"));
+    assert.deepEqual((await db.query('select project_id from public."HackDayProject" order by project_id')).rows.map((row) => row.project_id), catalog.map((project) => project.id).sort());
+    await db.exec(`insert into public."HackDayProject" values ('hack-day-2026', 'retired-challenge', true);`);
+    await db.exec(await readFile(new URL("../db/hack-day-projects-review.sql", import.meta.url), "utf8"));
+    assert.equal((await db.query(`select published from public."HackDayProject" where project_id = 'retired-challenge'`)).rows[0].published, false);
     const key = "a".repeat(64);
-    const insert = (voter = key, project = "webdev-signal") => db.query('insert into public."HackDayVote" (event_id, voter_key, project_id) values ($1, $2, $3)', ["hack-day-2026", voter, project]);
+    const insert = (voter = key, project = "hack-day-pix-glance") => db.query('insert into public."HackDayVote" (event_id, voter_key, project_id) values ($1, $2, $3)', ["hack-day-2026", voter, project]);
     const code = (expected) => (error) => error.code === expected;
 
     await assert.rejects(insert(), code("23514"));
     await db.exec(`update public."HackDayEvent" set enabled = true, opens_at = now() - interval '1 hour';`);
     await assert.rejects(insert(), code("23514"));
-    await db.exec(`update public."HackDayProject" set published = true where project_id = 'webdev-signal';`);
+    await db.exec(`update public."HackDayProject" set published = true where project_id = 'hack-day-pix-glance';`);
     const simultaneous = await Promise.allSettled([insert(), insert()]);
     assert.equal(simultaneous.filter((result) => result.status === "fulfilled").length, 1);
     assert.equal(simultaneous.find((result) => result.status === "rejected").reason.code, "23505");

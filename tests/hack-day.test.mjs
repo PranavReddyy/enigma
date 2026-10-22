@@ -40,13 +40,18 @@ const request = (body = { projectId: projects[0].id }, token = "valid", origin =
   url: "https://www.mu-enigma.org/api/hack-day", headers: new Headers({ origin, authorization: `Bearer ${token}` }), json: async () => body,
 });
 
-test("discovered source links are unique, from the five tracked repositories, and contain no starter-only entries", () => {
-  assert.equal(new Set(projects.map((project) => project.id)).size, projects.length);
-  assert.equal(new Set(projects.map((project) => project.domain)).size, 5);
+test("ballot contains only the ten distinct Hack Day submissions, with matching SQL candidates", async () => {
+  assert.equal(projects.length, 10);
+  assert.equal(new Set(projects.map((project) => project.id)).size, 10);
+  assert.equal(new Set(projects.map((project) => project.url)).size, 10);
+  assert.deepEqual(projects.map((project) => Number(project.url.split("/").at(-1))).sort((a,b) => a-b), [1,2,4,5,6,7,8,9,10,11]);
+  const sql = await readFile(new URL("../db/hack-day-projects-review.sql", import.meta.url), "utf8");
+  const seeded = [...sql.matchAll(/\('hack-day-2026', '([^']+)', false\)/g)].map((match) => match[1]);
+  assert.deepEqual(seeded.sort(), projects.map((project) => project.id).sort());
   for (const project of projects) {
-    assert.match(project.url, /^https:\/\/github\.com\/MU-Enigma\/Hacktoberfest(?:26|2026)-/);
-    assert.ok(project.author && project.name && project.description);
-    assert.ok(!/lunch-lab|datasets|artifacts/.test(project.url));
+    assert.match(project.url, /^https:\/\/github\.com\/MU-Enigma\/Hacktoberfest26-HackDay-Submissions\/pull\/\d+$/);
+    assert.ok(project.author && project.name && project.description && project.domain);
+    assert.ok(!/Challenges|webdev-signal|level-/.test(project.url + project.id));
   }
 });
 

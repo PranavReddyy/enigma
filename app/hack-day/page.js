@@ -7,7 +7,7 @@ import { ArrowUpRight, Check, FolderCode, LockKeyhole, Search, ShieldCheck } fro
 import inventory from "@/lib/hack-day-projects.json";
 import styles from "./voting.module.css";
 
-const domains = ["All projects", "AI/ML", "SysCom", "GameDev", "WebDev", "Theoretical & Math"];
+const domains = ["All projects", ...new Set(inventory.map((project) => project.domain))];
 let authClient;
 function emailAuth() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return null;
@@ -167,7 +167,7 @@ export default function HackDayPage() {
             <div className={styles.brand}><FolderCode size={30} /><div><strong>HACK DAY</strong><small>THE COMMUNITY BALLOT</small></div></div>
             <fieldset className={styles.group}><legend>Project directory</legend><nav aria-label="Filter by domain">{domains.map((item) => <button key={item} type="button" aria-pressed={domain === item} className={domain === item ? styles.active : ""} onClick={() => setDomain(item)}><FolderCode size={16} />{item}</button>)}</nav></fieldset>
             <fieldset className={styles.group}><legend>Voting rules</legend><p><ShieldCheck size={17} /> One verified email, one vote.</p><p><LockKeyhole size={17} /> Vote totals stay private.</p><p>Your vote is final. Explore the source before choosing.</p></fieldset>
-            <a className={styles.source} href="https://github.com/MU-Enigma" target="_blank" rel="noopener noreferrer">MU-Enigma on GitHub <ArrowUpRight size={15} /></a>
+            <a className={styles.source} href="https://github.com/MU-Enigma/Hacktoberfest26-HackDay-Submissions" target="_blank" rel="noopener noreferrer">Hack Day submissions <ArrowUpRight size={15} /></a>
           </aside>
           <div className={styles.content}>
             <div className={styles.address}><span>Address</span><code>C:\ENIGMA\HACK_DAY\VOTE</code></div>
