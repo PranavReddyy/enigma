@@ -1,0 +1,87 @@
+/* Adapted from MU-Enigma's MIT-licensed SIGNAL UI. See docs/WebDev-UI-LICENSE.txt. */
+.desktop { --panel: #c0c0c0; --paper: #f6f6f2; --navy: #000080; --ink: #151515; min-height: 100vh; padding: 30px clamp(12px, 4vw, 70px) 24px; color: var(--ink); font-family: Tahoma, "Segoe UI", sans-serif; font-size: 14px; background: #050505; isolation: isolate; }
+.desktop * { box-sizing: border-box; }
+.desktop a, .desktop button { touch-action: manipulation; }
+.desktop button { cursor: pointer; }
+.desktop button:disabled { cursor: not-allowed; color: #626262; background: #d7d7d7; }
+.desktop a:focus-visible, .desktop button:focus-visible, .desktop input:focus-visible, .confirm:focus, .account h2:focus { outline: 3px solid #00817d; outline-offset: 3px; }
+.desktop svg { flex-shrink: 0; }
+.wallpaper { position: fixed; inset: 0; z-index: -1; display: flex; flex-direction: column; justify-content: space-around; overflow: hidden; color: #343434; font: 9px "Courier New", monospace; letter-spacing: 4px; pointer-events: none; }
+.wallpaper span { white-space: nowrap; }
+.topline, .desktopFooter { max-width: 1380px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 20px; color: #b8b8b8; font: 11px "Courier New", monospace; letter-spacing: .08em; }
+.topline { margin-bottom: 18px; }
+.topline a, .desktopFooter a { color: white; text-decoration: none; }
+.window { max-width: 1380px; margin: auto; background: var(--panel); border: 2px solid; border-color: white #171717 #171717 white; box-shadow: 9px 9px 0 #000; }
+.titlebar, .cardbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--navy); color: white; padding: 8px 10px; font-size: 12px; font-weight: 700; }
+.titlebar > span:first-child { display: flex; align-items: center; gap: 8px; }
+.menubar { display: flex; flex-wrap: wrap; gap: 6px 24px; padding: 5px 15px; border-bottom: 1px solid #808080; }
+.menubar a { display: flex; align-items: center; min-height: 36px; color: #111; text-decoration: none; font-size: 12px; }
+.workspace { display: grid; grid-template-columns: 220px minmax(0, 1fr); }
+.sidebar { padding: 18px 14px; border-right: 2px groove white; display: flex; flex-direction: column; gap: 23px; background: #b9b9b9; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 17px 10px; color: white; background: #080808; border: 2px inset #ddd; }
+.brand strong { display: block; font-size: 19px; letter-spacing: .05em; }
+.brand small { display: block; font-size: 8px; letter-spacing: .08em; margin-top: 4px; }
+.group { min-width: 0; margin: 0; padding: 12px 8px 10px; border: 1px solid; border-color: #808080 white white #808080; }
+.group legend { padding: 0 5px; font-size: 11px; font-weight: 700; }
+.group nav { display: grid; gap: 5px; }
+.group nav button { display: flex; align-items: center; gap: 8px; padding: 10px 8px; min-height: 44px; border: 1px solid transparent; text-align: left; font-size: 12px; background: transparent; color: #151515; }
+.group nav button:hover { border: 1px dotted #000; }
+.group nav .active { color: white; background: var(--navy); }
+.group p { display: flex; align-items: flex-start; gap: 7px; font-size: 11px; line-height: 1.6; margin: 7px 0 12px; }
+.source { display: flex; align-items: center; gap: 5px; color: #222; font-size: 11px; }
+.content { min-width: 0; }
+.address { display: flex; align-items: center; gap: 10px; padding: 5px 8px; border-bottom: 1px solid #808080; font-size: 11px; }
+.address code { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; padding: 5px 8px; background: white; border: 2px inset #ddd; }
+.body { padding: clamp(16px, 3vw, 38px); background: #d6d6d6; }
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) 200px; gap: 22px; padding: clamp(22px, 3vw, 38px); background: var(--paper); border: 2px inset #ddd; }
+.eyebrow { font: bold 10px "Courier New", monospace; letter-spacing: .1em; color: var(--navy); margin: 0 0 12px; line-height: 1.7; }
+.hero h1 { margin: 0; font-family: Impact, "Arial Narrow", sans-serif; font-size: clamp(36px, 4.2vw, 63px); font-weight: 700; line-height: 1.02; letter-spacing: -.025em; }
+.hero h1 span { color: var(--navy); }
+.hero p:not(.eyebrow) { max-width: 440px; color: #444; line-height: 1.7; font-size: 13px; margin: 18px 0; }
+.button, .primary { display: inline-flex; justify-content: center; align-items: center; gap: 7px; min-height: 44px; padding: 9px 13px; border: 2px solid; border-color: white #151515 #151515 white; background: var(--panel); color: #151515; text-decoration: none; font-size: 12px; font-weight: 700; line-height: 1.4; }
+.primary { background: var(--navy); color: white; }
+.button:active, .primary:active { border-color: #151515 white white #151515; }
+.ballotArt { display: flex; align-items: center; justify-content: flex-end; flex-direction: column; background: var(--navy); padding: 35px 15px 25px; overflow: hidden; }
+.paper { position: relative; z-index: 1; width: 105px; height: 135px; padding: 17px; background: #f5f5ef; transform: rotate(-9deg); border: 1px solid #111; box-shadow: 5px 5px 0 #0006; }
+.paper span { font: bold 11px "Courier New", monospace; letter-spacing: .1em; }
+.paper i { display: block; width: 58px; height: 2px; margin-top: 10px; background: #aaa; }
+.paper b { position: absolute; right: 14px; bottom: 10px; color: var(--navy); font-size: 40px; }
+.box { width: 145px; position: relative; margin-top: -13px; border-top: 10px solid #111; background: #c0c0c0; padding: 25px 10px; text-align: center; font: 13px "Courier New", monospace; box-shadow: 6px 6px 0 #0005; }
+.box strong { font-size: 25px; }
+.account { display: grid; grid-template-columns: minmax(0, 1fr) minmax(200px, 300px); gap: 25px; margin-top: 25px; padding: 22px; background: #eee; border: 2px solid; border-color: white #808080 #808080 white; }
+.account h2, .confirm h2 { font-size: 20px; margin: 0 0 10px; line-height: 1.35; }
+.account p:not(.eyebrow), .confirm p:not(.eyebrow) { font-size: 12px; line-height: 1.7; color: #444; overflow-wrap: anywhere; }
+.login { display: grid; gap: 8px; }
+.login label { font-size: 12px; font-weight: bold; }
+.login input { min-width: 0; width: 100%; min-height: 44px; background: white; border: 2px inset #ddd; padding: 8px 10px; color: #111; }
+.actions, .signedIn { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.signedIn span { display: flex; align-items: center; gap: 5px; font-size: 12px; overflow-wrap: anywhere; }
+.notice, .error { display: flex; align-items: center; gap: 12px; padding: 14px; margin-top: 20px; background: #fffbe8; border: 1px solid #948650; font-size: 12px; line-height: 1.6; }
+.error { background: #fff0f0; color: #8a0000; border-color: #aa3333; flex-wrap: wrap; }
+.notice p { margin: 0; }
+.confirm { padding: 22px; margin: 20px 0; background: white; border: 2px solid var(--navy); scroll-margin-top: 20px; }
+.projects { margin-top: 36px; scroll-margin-top: 20px; }
+.directoryHeader { display: flex; justify-content: space-between; align-items: end; gap: 15px; margin-bottom: 18px; }
+.directoryHeader h2 { margin: 0; font-size: clamp(24px, 3vw, 33px); font-family: Impact, "Arial Narrow", sans-serif; letter-spacing: -.015em; }
+.directoryHeader > span { font: 11px "Courier New", monospace; text-align: right; }
+.search { display: flex; align-items: center; gap: 10px; background: white; padding: 0 12px; border: 2px inset #ddd; margin-bottom: 20px; }
+.search input { min-width: 0; flex: 1; height: 44px; border: 0; background: transparent; color: #111; font-size: 13px; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.card { min-width: 0; background: #f4f4f0; border: 2px solid; border-color: white #404040 #404040 white; box-shadow: 3px 3px 0 #0002; }
+.cardbar { font: bold 10px "Courier New", monospace; gap: 8px; padding: 8px; }
+.cardbar span:last-child { text-align: right; }
+.cardbody { padding: 20px; }
+.projectIcon { display: grid; place-items: center; width: 52px; height: 48px; margin-bottom: 17px; color: var(--navy); background: #e2e2df; border: 2px inset #ddd; }
+.card h3 { margin: 0 0 8px; font-size: 17px; line-height: 1.5; overflow-wrap: anywhere; }
+.author { margin: 0 0 12px; color: #555; font: 11px "Courier New", monospace; overflow-wrap: anywhere; }
+.description { color: #414141; font-size: 12px; line-height: 1.8; margin: 0 0 20px; }
+.cardactions { display: flex; gap: 10px; flex-wrap: wrap; }
+.empty { padding: 30px; border: 2px inset #ddd; background: #eee; line-height: 1.7; }
+.statusbar { display: grid; grid-template-columns: 1fr auto auto; gap: 4px; padding: 4px; font-size: 10px; }
+.statusbar span { border: 1px solid; border-color: #808080 white white #808080; padding: 6px 10px; }
+.desktopFooter { margin-top: 25px; flex-wrap: wrap; font-size: 10px; }
+.desktopFooter p { margin: 0; }
+.srOnly, .skip:not(:focus) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.skip:focus { display: block; background: white; color: black; padding: 12px; }
+@media (max-width: 1000px) { .workspace { grid-template-columns: 180px minmax(0, 1fr); } .hero { grid-template-columns: 1fr; } .ballotArt { display: none; } .account { grid-template-columns: 1fr; } .grid { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .desktop { padding: 15px 10px 20px; } .topline { font-size: 9px; gap: 10px; } .workspace { grid-template-columns: 1fr; } .sidebar { border-right: 0; border-bottom: 2px groove white; padding: 12px; gap: 10px; } .brand, .sidebar > .group:nth-of-type(2), .source { display: none; } .group nav { display: flex; flex-wrap: wrap; gap: 5px; } .group nav button { padding: 7px 9px; } .group nav svg { display: none; } .body { padding: 15px; } .hero { padding: 23px 20px; } .hero h1 { font-size: 46px; } .menubar { gap: 6px 16px; } .account { padding: 17px; } .directoryHeader { align-items: flex-start; flex-direction: column; } .statusbar { grid-template-columns: 1fr auto; } .statusbar span:nth-child(2) { display: none; } }
