@@ -6,8 +6,8 @@ import crypto from "node:crypto";
 
 const projects = JSON.parse(await readFile(new URL("../lib/hack-day-projects.json", import.meta.url), "utf8"));
 
-async function setup({ configured = true, user = { email: "voter@example.com", email_confirmed_at: "2026-10-21" }, insertError = null, enabled = true, vote = null, queryError = null, clientError = false, ballot = [{ project_id: projects[0].id }], opensAt = "2026-10-01T00:00:00Z", closesAt = null, now = Date.now() } = {}) {
-  const writes = [];
+async function setup({ environment = null, configured = true, user = { email: "voter@example.com", email_confirmed_at: "2026-10-21" }, insertError = null, enabled = true, vote = null, queryError = null, clientError = false, ballot = [{ project_id: projects[0].id }], opensAt = "2026-10-01T00:00:00Z", closesAt = null, now = Date.now() } = {}) {
+  const writes = [], connections = [];
   const db = {
     auth: { getUser: async (token) => ({ data: { user: token === "valid" ? user : null }, error: null }) },
     from(table) {
@@ -19,10 +19,10 @@ async function setup({ configured = true, user = { email: "voter@example.com", e
       };
     },
   };
-  const context = vm.createContext({ process: { env: configured ? { NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co", SUPABASE_SERVICE_ROLE_KEY: "server-only" } : {} }, Date: class extends Date { static now() { return now; } }, Set, URL });
+  const context = vm.createContext({ process: { env: environment ?? (configured ? { NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co", SUPABASE_SERVICE_ROLE_KEY: "server-only" } : {}) }, Date: class extends Date { static now() { return now; } }, Set, URL });
   const dependencies = {
     "next/server": { NextResponse: { json: (body, options) => ({ body, ...options }) } },
-    "@supabase/supabase-js": { createClient: () => { if (clientError) throw new Error("Invalid supabaseUrl"); return db; } },
+    "@supabase/supabase-js": { createClient: (...args) => { connections.push(args); if (clientError) throw new Error("Invalid supabaseUrl"); return db; } },
     "node:crypto": { createHash: crypto.createHash },
     "@/lib/hack-day-projects.json": { default: projects },
   };
@@ -33,7 +33,7 @@ async function setup({ configured = true, user = { email: "voter@example.com", e
     return new vm.SyntheticModule(Object.keys(values), function () { for (const [key, value] of Object.entries(values)) this.setExport(key, value); }, { context });
   });
   await routeModule.evaluate();
-  return { route: routeModule.namespace, writes };
+  return { route: routeModule.namespace, writes, connections };
 }
 
 const request = (body = { projectId: projects[0].id }, token = "valid", origin = "https://www.mu-enigma.org") => ({
@@ -142,4 +142,26 @@ test("ballot opens at its opening instant and closes at its closing instant", as
     const { route } = await setup({ opensAt, closesAt, now });
     assert.equal((await route.GET(request())).body.open, open);
   }
+});
+
+test("dedicated voting database uses its own credentials and never mixes projects", async () => {
+  const environment = { NEXT_PUBLIC_SUPABASE_URL: "https://legacy.supabase.co", SUPABASE_SERVICE_ROLE_KEY: "legacy-secret", NEXT_PUBLIC_HACK_DAY_SUPABASE_URL: "https://voting.supabase.co", HACK_DAY_SUPABASE_SERVICE_ROLE_KEY: "voting-secret" };
+  const dedicated = await setup({ environment });
+  assert.equal((await dedicated.route.GET(request())).body.ready, true);
+  assert.equal(dedicated.connections[0][0], environment.NEXT_PUBLIC_HACK_DAY_SUPABASE_URL);
+  assert.equal(dedicated.connections[0][1], "voting-secret");
+  for (const partial of [
+    { NEXT_PUBLIC_HACK_DAY_SUPABASE_URL: "https://voting.supabase.co" },
+    { NEXT_PUBLIC_HACK_DAY_SUPABASE_ANON_KEY: "voting-public" },
+    { HACK_DAY_SUPABASE_SERVICE_ROLE_KEY: "voting-secret" },
+  ]) {
+    const incomplete = await setup({ environment: { NEXT_PUBLIC_SUPABASE_URL: "https://legacy.supabase.co", SUPABASE_SERVICE_ROLE_KEY: "legacy-secret", ...partial } });
+    assert.equal((await incomplete.route.GET(request())).body.ready, false);
+    assert.equal((await incomplete.route.POST(request())).status, 503);
+    assert.equal(incomplete.connections.length, 0);
+  }
+  const legacy = await setup();
+  await legacy.route.GET(request());
+  assert.equal(legacy.connections[0][0], "https://example.supabase.co");
+  assert.equal(legacy.connections[0][1], "server-only");
 });

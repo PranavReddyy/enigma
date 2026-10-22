@@ -12,9 +12,9 @@ const response = (body, status = 200) => ({ ok: status < 400, status, json: asyn
 const ballot = (extra = {}) => ({ projects: [project], ready: true, open: true, vote: null, ...extra });
 const settle = async () => { for (let i = 0; i < 12; i++) await Promise.resolve(); };
 
-async function app(fetch, { authError = null } = {}) {
+async function app(fetch, { authError = null, env = { NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co", NEXT_PUBLIC_SUPABASE_ANON_KEY: "public" } } = {}) {
   let position = 0, now = Date.parse("2026-10-22T10:00:00Z"), authChanged;
-  const hooks = [], effects = [], timers = new Map();
+  const hooks = [], effects = [], timers = new Map(), connections = [];
   const changed = (a, b) => !a || a.length !== b.length || a.some((value, index) => value !== b[index]);
   const react = {
     useState(initial) { const index = position++; hooks[index] ??= { value: typeof initial === "function" ? initial() : initial }; return [hooks[index].value, (value) => { hooks[index].value = typeof value === "function" ? value(hooks[index].value) : value; }]; },
@@ -31,12 +31,12 @@ async function app(fetch, { authError = null } = {}) {
   class Clock extends Date { constructor(...args) { super(...(args.length ? args : [now])); } static now() { return now; } }
   const listeners = new Map();
   const surface = { addEventListener(name, callback) { listeners.set(name, callback); }, removeEventListener(name) { listeners.delete(name); }, visibilityState: "visible" };
-  const context = vm.createContext({ process: { env: { NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co", NEXT_PUBLIC_SUPABASE_ANON_KEY: "public" } }, fetch, Date: Clock, AbortSignal, window: surface, document: surface,
+  const context = vm.createContext({ process: { env }, fetch, Date: Clock, AbortSignal, window: surface, document: surface,
     setInterval(callback, delay) { const id = timers.size + 1; timers.set(id, { callback, delay }); return id; }, clearInterval(id) { timers.delete(id); }, setTimeout(callback) { callback(); return 1; }, clearTimeout() {} });
   const jsx = (type, props) => ({ type, props });
   const dependencies = {
     react, "react/jsx-runtime": { jsx, jsxs: jsx, Fragment: "fragment" }, "next/link": { default: "a" },
-    "@supabase/supabase-js": { createClient: () => client }, "lucide-react": Object.fromEntries(["ArrowUpRight", "Check", "FolderCode", "LockKeyhole", "Search", "ShieldCheck"].map((name) => [name, name])),
+    "@supabase/supabase-js": { createClient: (...args) => { connections.push(args); return client; } }, "lucide-react": Object.fromEntries(["ArrowUpRight", "Check", "FolderCode", "LockKeyhole", "Search", "ShieldCheck"].map((name) => [name, name])),
     "@/lib/hack-day-projects.json": { default: [project] }, "./voting.module.css": { default: {} },
   };
   const route = new vm.SourceTextModule(code, { context });
@@ -47,7 +47,7 @@ async function app(fetch, { authError = null } = {}) {
   const nodes = (node) => Array.isArray(node) ? node.flatMap(nodes) : node && typeof node === "object" ? [node, ...nodes(node.props?.children)] : [];
   const text = (node) => Array.isArray(node) ? node.map(text).join("") : node && typeof node === "object" ? (node.props?.["aria-hidden"] ? "" : text(node.props?.children)) : node == null || typeof node === "boolean" ? "" : String(node);
   render();
-  return { render, text: () => text(tree), find: (label, type = "button") => nodes(tree).find((node) => node.type === type && text(node) === label), input: (id) => nodes(tree).find((node) => node.props?.id === id),
+  return { render, connections, text: () => text(tree), find: (label, type = "button") => nodes(tree).find((node) => node.type === type && text(node) === label), input: (id) => nodes(tree).find((node) => node.props?.id === id),
     auth: (session) => authChanged("SIGNED_IN", session), advance(ms) { now += ms; for (const timer of [...timers.values()]) timer.callback(); }, cleanup() { for (const hook of hooks) hook?.cleanup?.(); } };
 }
 
@@ -162,4 +162,30 @@ test("a revoked session reveals email verification rather than leaving a stale s
   assert.ok(ui.find("Send verification code"));
   assert.ok(!ui.find("Sign out"));
   ui.cleanup();
+});
+
+
+test("dedicated voting credentials use their own pair rather than the Enigma site's connection", async () => {
+  const ui = await app(async () => response(ballot()), { env: {
+    NEXT_PUBLIC_SUPABASE_URL: "https://legacy.supabase.co", NEXT_PUBLIC_SUPABASE_ANON_KEY: "legacy-key",
+    NEXT_PUBLIC_HACK_DAY_SUPABASE_URL: "https://voting.supabase.co", NEXT_PUBLIC_HACK_DAY_SUPABASE_ANON_KEY: "voting-key",
+  } });
+  assert.deepEqual(ui.connections[0].slice(0, 2), ["https://voting.supabase.co", "voting-key"]);
+  ui.cleanup();
+});
+
+test("existing Enigma credentials remain the fallback when no dedicated voting connection is supplied", async () => {
+  const ui = await app(async () => response(ballot()));
+  assert.deepEqual(ui.connections[0].slice(0, 2), ["https://example.supabase.co", "public"]);
+  ui.cleanup();
+});
+
+test("partial dedicated voting credentials never borrow the legacy site's URL or key", async () => {
+  for (const dedicated of [{ NEXT_PUBLIC_HACK_DAY_SUPABASE_URL: "https://voting.supabase.co" }, { NEXT_PUBLIC_HACK_DAY_SUPABASE_ANON_KEY: "voting-key" }]) {
+    const ui = await app(async () => response(ballot()), { env: {
+      NEXT_PUBLIC_SUPABASE_URL: "https://legacy.supabase.co", NEXT_PUBLIC_SUPABASE_ANON_KEY: "legacy-key", ...dedicated,
+    } });
+    assert.equal(ui.connections.length, 0);
+    ui.cleanup();
+  }
 });

@@ -10,8 +10,11 @@ import styles from "./voting.module.css";
 const domains = ["All projects", ...new Set(inventory.map((project) => project.domain))];
 let authClient;
 function emailAuth() {
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return null;
-  authClient ??= createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+  const dedicated = process.env.NEXT_PUBLIC_HACK_DAY_SUPABASE_URL || process.env.NEXT_PUBLIC_HACK_DAY_SUPABASE_ANON_KEY;
+  const url = dedicated ? process.env.NEXT_PUBLIC_HACK_DAY_SUPABASE_URL : process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = dedicated ? process.env.NEXT_PUBLIC_HACK_DAY_SUPABASE_ANON_KEY : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  authClient ??= createClient(url, key, {
     auth: { storageKey: "enigma-hack-day-auth", detectSessionInUrl: false },
   });
   return authClient;
