@@ -14,7 +14,7 @@ const settle = async () => { for (let i = 0; i < 12; i++) await Promise.resolve(
 
 async function app(fetch, { authError = null, env = { NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co", NEXT_PUBLIC_SUPABASE_ANON_KEY: "public" } } = {}) {
   let position = 0, now = Date.parse("2026-10-22T10:00:00Z"), authChanged;
-  const hooks = [], effects = [], timers = new Map(), connections = [];
+  const hooks = [], effects = [], timers = new Map(), connections = [], verificationRequests = [];
   const changed = (a, b) => !a || a.length !== b.length || a.some((value, index) => value !== b[index]);
   const react = {
     useState(initial) { const index = position++; hooks[index] ??= { value: typeof initial === "function" ? initial() : initial }; return [hooks[index].value, (value) => { hooks[index].value = typeof value === "function" ? value(hooks[index].value) : value; }]; },
@@ -25,7 +25,7 @@ async function app(fetch, { authError = null, env = { NEXT_PUBLIC_SUPABASE_URL: 
   const client = { auth: {
     onAuthStateChange(callback) { authChanged = callback; return { data: { subscription: { unsubscribe() {} } } }; },
     getSession: async () => ({ data: { session: currentSession } }),
-    signInWithOtp: async () => ({ error: authError }), verifyOtp: async () => ({ error: authError }),
+    signInWithOtp: async () => ({ error: authError }), verifyOtp: async (details) => { verificationRequests.push(details); return { error: authError }; },
     signOut: async () => { if (!authError) authChanged("SIGNED_OUT", null); return { error: authError }; },
   } };
   class Clock extends Date { constructor(...args) { super(...(args.length ? args : [now])); } static now() { return now; } }
@@ -47,7 +47,7 @@ async function app(fetch, { authError = null, env = { NEXT_PUBLIC_SUPABASE_URL: 
   const nodes = (node) => Array.isArray(node) ? node.flatMap(nodes) : node && typeof node === "object" ? [node, ...nodes(node.props?.children)] : [];
   const text = (node) => Array.isArray(node) ? node.map(text).join("") : node && typeof node === "object" ? (node.props?.["aria-hidden"] ? "" : text(node.props?.children)) : node == null || typeof node === "boolean" ? "" : String(node);
   render();
-  return { render, connections, text: () => text(tree), find: (label, type = "button") => nodes(tree).find((node) => node.type === type && text(node) === label), input: (id) => nodes(tree).find((node) => node.props?.id === id),
+  return { render, connections, verificationRequests, text: () => text(tree), find: (label, type = "button") => nodes(tree).find((node) => node.type === type && text(node) === label), input: (id) => nodes(tree).find((node) => node.props?.id === id),
     auth: (session) => authChanged("SIGNED_IN", session), advance(ms) { now += ms; for (const timer of [...timers.values()]) timer.callback(); }, cleanup() { for (const hook of hooks) hook?.cleanup?.(); } };
 }
 
@@ -188,4 +188,23 @@ test("partial dedicated voting credentials never borrow the legacy site's URL or
     assert.equal(ui.connections.length, 0);
     ui.cleanup();
   }
+});
+
+test("verification form accepts current eight-digit codes and preserves legacy six-digit codes", async () => {
+  const ui = await app(async () => response(ballot()));
+  ui.auth(null); await settle(); ui.render();
+  ui.input("voter-email").props.onChange({ target: { value: "student@example.com" } }); ui.render();
+  const walk = (node) => Array.isArray(node) ? node.flatMap(walk) : node && typeof node === "object" ? [node, ...walk(node.props?.children)] : [];
+  const form = () => walk(ui.render()).find((node) => node.type === "form");
+  await form().props.onSubmit({ preventDefault() {} }); ui.render();
+  const input = ui.input("voter-code");
+  assert.equal(input.props.maxLength, 8);
+  const accepts = new RegExp("^(?:" + input.props.pattern + ")$");
+  for (const token of ["123456", "12345678"]) assert.ok(accepts.test(token));
+  for (const token of ["12345", "1234567", "123456789", "abcdefgh"]) assert.ok(!accepts.test(token));
+  input.props.onChange({ target: { value: "12345678" } }); ui.render();
+  await form().props.onSubmit({ preventDefault() {} }); ui.render();
+  assert.equal(ui.verificationRequests[0].token, "12345678");
+  assert.equal(ui.verificationRequests[0].type, "email");
+  ui.cleanup();
 });

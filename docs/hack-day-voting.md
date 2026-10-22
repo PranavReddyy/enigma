@@ -122,3 +122,8 @@ Do not add this query to a public endpoint. The current user request is to keep 
 ## Dedicated project verification (October 22)
 
 The schema and ten approved candidates are installed in `enigma-voting`. A transaction on that real database confirmed duplicate-vote rejection and was rolled back. The retained vote count is zero and the event remains disabled. Both anon and authenticated roles lack SELECT access to votes; security advisors report only the expected informational notices for intentionally private RLS tables without public policies. Production email delivery, the private server key and Vercel wiring are still required before enabling voting.
+
+## Resend SMTP setup (October 23)
+
+Custom SMTP is configured in `enigma-voting` using a sending-only Resend key scoped to the already-verified `thebox.mu-enigma.org` domain. Sender: `Enigma Hack Day <noreply@thebox.mu-enigma.org>`; host: `smtp.resend.com`; port: 465; username: `resend`. The secret exists only in Supabase's encrypted SMTP configuration; do not commit or share it. Both the Confirm Signup and Magic Link/OTP templates send `{{ .Token }}`; first-time voters use the signup template. Supabase's current eight-digit OTP setting is retained; the page accepts eight-digit codes as well as legacy six-digit codes. SMTP configuration does not open the ballot: real email delivery, successful verification and a legitimate vote still need launch checks.
+
