@@ -14,7 +14,7 @@ await db.exec("create role anon; create role authenticated; create role service_
 await db.exec(await readFile(new URL("../db/hack-day-voting.sql", import.meta.url), "utf8"));
 await db.exec(await readFile(new URL("../db/hack-day-projects-review.sql", import.meta.url), "utf8"));
 await db.exec(`update public."HackDayEvent" set enabled = true, opens_at = now() - interval '1 hour', closes_at = now() + interval '1 hour'; update public."HackDayProject" set published = true;`);
-assert.equal((await db.query('select count(*)::int as n from public."HackDayProject"')).rows[0].n, 50);
+assert.equal((await db.query('select count(*)::int as n from public."HackDayProject"')).rows[0].n, 10);
 
 function sessionFor(email, id = randomUUID()) {
   const now = Math.floor(Date.now() / 1000);

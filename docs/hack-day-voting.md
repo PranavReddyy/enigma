@@ -3,8 +3,8 @@
 ## Current implementation
 
 - `/hack-day` adapts the WebDev repository's MIT-licensed SIGNAL desktop UI. Styles are scoped to this route.
-- The gallery contains 50 discovered submission directories/shared projects from the five existing repositories, inventoried October 21, 2026. Source links are real; entries are **not an organiser-approved Hack Day shortlist**. SIGNAL is one shared project, not one entry per WebDev pull request. Starter challenge directories and AI/ML's starter lunch-lab are excluded.
-- The organiser publishes approved IDs in `HackDayProject`; once configured, the public ballot shows only those IDs. Do not bulk-approve the discovery inventory without reviewing eligibility, duplicate stages, project names and teams. Multiple challenge levels from one person may describe one project.
+- The gallery contains only the **10 distinct Hack Day submissions** from [MU-Enigma/Hacktoberfest26-HackDay-Submissions](https://github.com/MU-Enigma/Hacktoberfest26-HackDay-Submissions), reviewed October 22, 2026. Each card links to its submission pull request, including the team README and submitted files. Open PRs #1, #2 and #4–#11 are included; closed duplicate Wispend PR #3 is excluded. The five Hacktober challenge repositories and SIGNAL are not ballot entries. SIGNAL is only the visual design reference.
+- The organiser publishes approved IDs in `HackDayProject`; once configured, the public ballot shows only those IDs. The review SQL unpublishes obsolete challenge candidates without deleting rows or existing votes. Re-running it preserves approval of current entries. It does not reset votes; an organiser must resolve any votes from an earlier ballot before launch.
 - Exactly one final vote per normalized, verified email per event is enforced by a database primary key. Email ownership is checked server-side with Supabase Auth. Clearing cookies, a new browser, a new device or simultaneous requests cannot bypass the constraint for the same email.
 - This is **not proof of one human**: someone with multiple email accounts can vote multiple times. The default audience is all verified email accounts. Use institutional SSO or an organiser-approved voter roster if strict one-person eligibility is required; that scope was not specified.
 - No tallies, voter lists or results are available through the public API or Supabase's public Data API. The browser can read its own choice only. Operators can tally privately using the SQL below.
@@ -15,11 +15,11 @@
 This checkout has no Enigma Supabase environment access. No production schema, auth settings or emails were changed. The account that owns Enigma's Supabase project must complete this setup:
 
 1. Apply `db/hack-day-voting.sql` once in the existing Enigma project, then `db/hack-day-projects-review.sql`. The latter creates unpublished review candidates only. The schema deliberately leaves the event **disabled**.
-2. Review `lib/hack-day-projects.json`, correcting titles/team names and consolidating duplicate project stages before accepting the shortlist. Update the JSON and review SQL together if an entry changes. Publish approved entries individually, for example:
+2. Review the ten entries in `lib/hack-day-projects.json` against the Hack Day submission PRs. Update the JSON and review SQL together if an entry changes. Publish approved entries individually, for example:
 
    ```sql
    update public."HackDayProject" set published = true
-   where event_id = 'hack-day-2026' and project_id = 'webdev-signal';
+   where event_id = 'hack-day-2026' and project_id = 'hack-day-pix-glance';
    ```
 
 3. Check production environment names: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`. The service-role key must stay server-only. No new npm runtime dependency is required.
