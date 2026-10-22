@@ -12,9 +12,9 @@
 
 ## Owner setup required before voting opens
 
-This checkout has no Enigma Supabase environment access. No production schema, auth settings or emails were changed. The account that owns Enigma's Supabase project must complete this setup:
+A dedicated Supabase project named `enigma-voting` has been created in the user's `ryan solutions` organization (Mumbai, reference `pjuduawkfinnrtfnkemo`). Its private voting schema and ten approved project records are provisioned. The event remains disabled until production email delivery and deployment wiring are verified. This is separate from Enigma's existing Supabase project. No existing Enigma votes were migrated.
 
-1. Apply `db/hack-day-voting.sql` once in the existing Enigma project, then `db/hack-day-projects-review.sql`. The latter creates unpublished review candidates only. The schema deliberately leaves the event **disabled**.
+1. The schema and ballot seed have already been applied to the dedicated project. For a different fresh project, apply `db/hack-day-voting.sql` once, then `db/hack-day-projects-review.sql`. The schema deliberately leaves the event **disabled**.
 2. Review the ten entries in `lib/hack-day-projects.json` against the Hack Day submission PRs. Update the JSON and review SQL together if an entry changes. Publish approved entries individually, for example:
 
    ```sql
@@ -22,7 +22,12 @@ This checkout has no Enigma Supabase environment access. No production schema, a
    where event_id = 'hack-day-2026' and project_id = 'hack-day-pix-glance';
    ```
 
-3. Check production environment names: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`. The service-role key must stay server-only. No new npm runtime dependency is required.
+3. Set these dedicated voting variables in Vercel Production, then rebuild/redeploy:
+   - `NEXT_PUBLIC_HACK_DAY_SUPABASE_URL`: `https://pjuduawkfinnrtfnkemo.supabase.co`
+   - `NEXT_PUBLIC_HACK_DAY_SUPABASE_ANON_KEY`: this project's publishable key (or active legacy anon key).
+   - `HACK_DAY_SUPABASE_SERVICE_ROLE_KEY`: this project's private server secret/service-role key.
+
+   Leave Enigma's original `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` unchanged. When no dedicated voting variables are supplied, voting keeps the original configuration for compatibility. A partial dedicated configuration fails closed; neither browser nor server borrows credentials from the original project. Never put the private key in a `NEXT_PUBLIC_` variable, Git, chat or screenshots. No new npm runtime dependency is required.
 4. In Supabase Auth, enable email sign-in/signup. Set the **Magic Link** email template to include `{{ .Token }}` so the voter receives a code. Configure production SMTP, delivery limits and an appropriate OTP expiry. Default development email delivery is unsuitable for opening to all students. See [Supabase email OTP documentation](https://supabase.com/docs/guides/auth/auth-email-passwordless).
 5. Confirm the intended opening and closing times. The initial proposed opening is October 22, 2026 at **00:00 IST**. No closing time was provided, so it is null; the organiser must set it. Use explicit timezone offsets.
 6. Deploy and perform the launch test below. Then explicitly open the event:
@@ -105,11 +110,15 @@ Do not add this query to a public endpoint. The current user request is to keep 
 
 `app/hack-day/` contains the page and scoped UI; `app/api/hack-day/route.js` validates votes; `lib/hack-day-projects.json` holds the source inventory; `db/` holds owner-run setup and review SQL; `tests/hack-day*` covers the API and database rules.
 
-## Verified local results (October 22)
+## Earlier local launch verification (October 22, before dedicated database connection)
 
 - All 31 unit, component-state and PostgreSQL tests pass.
 - Lint passes with zero errors and nine existing warnings.
 - The complete optimized production build succeeds with the isolated process-only test environment, including all 28 static pages.
 - The optimized app passes the actual HTTP integration checks: forged/cross-origin rejection, concurrent duplicate voting, saved-choice persistence and no public tallies.
 - The real browser journey passes against the local fixture: wrong-code recovery, verified sign-in, project selection, cancellation focus, vote confirmation and persistence after reload. Desktop and 390px mobile checks pass; the new homepage button opens /hack-day without horizontal overflow.
-- No production Supabase changes, email deliveries, real votes, merge or deployment were performed. A push does not provision the organiser's database/auth settings.
+- These earlier local checks did not modify production Supabase, deliver real emails or cast real votes. The dedicated project provisioned later is described above. A push alone does not configure SMTP or Vercel credentials.
+
+## Dedicated project verification (October 22)
+
+The schema and ten approved candidates are installed in `enigma-voting`. A transaction on that real database confirmed duplicate-vote rejection and was rolled back. The retained vote count is zero and the event remains disabled. Both anon and authenticated roles lack SELECT access to votes; security advisors report only the expected informational notices for intentionally private RLS tables without public policies. Production email delivery, the private server key and Vercel wiring are still required before enabling voting.
